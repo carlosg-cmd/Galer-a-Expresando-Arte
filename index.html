@@ -1,873 +1,760 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SENA — Concurso de Arte 2026 ✦ Galería Expresando Arte</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SENA — Concurso de Arte 2026 ✦ Galería Expresando Arte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: #7a5f2a;
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --text: #f0e8d8;
+      --text-dim: #8a7a62;
+      --border: #2a2318;
+      --success: #4caf7a;
+      --error: #c94c4c;
+    }
 
-  :root {
-    --oro: #C8923A;
-    --oro-claro: #E8B86D;
-    --oro-oscuro: #8B5E1E;
-    --negro: #0D0800;
-    --negro-medio: #1A1000;
-    --negro-suave: #261800;
-    --crema: #F5EDD6;
-    --crema-suave: #EDE0C4;
-    --cafe: #6B4C1E;
-    --cafe-suave: #3D2B0E;
-    --verde-ok: #2D6A4F;
-    --verde-ok-bg: #D8F3DC;
-    --rojo-err: #9B1C1C;
-    --rojo-err-bg: #FEE2E2;
-    --radio: 12px;
-    --radio-sm: 8px;
-    --radio-pill: 50px;
-  }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--negro);
-    color: var(--crema);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(180deg, #000 0%, var(--bg2) 100%);
+      border-bottom: 1px solid var(--gold-dim);
+      padding: 2rem 1rem 1.5rem;
+      text-align: center;
+      position: relative;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .header-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 0.3rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+    }
+    header h1 span { color: var(--gold); }
+    header p.subtitle {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--success);
+    }
+    .status-badge .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
 
-  /* ── FONDO TEXTURIZADO ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,146,58,0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(200,146,58,0.05) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    nav button.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+    nav button:hover:not(.active) { color: var(--text); }
 
-  .page-wrap { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 0 1rem 3rem; }
+    /* ── SECTIONS ── */
+    section { display: none; padding: 2rem 1rem 4rem; max-width: 700px; margin: 0 auto; }
+    section.active { display: block; }
 
-  /* ── HEADER ── */
-  .site-header {
-    text-align: center;
-    padding: 3rem 1rem 2.5rem;
-    border-bottom: 1px solid rgba(200,146,58,0.25);
-    margin-bottom: 2.5rem;
-  }
+    /* ── OBRAS GRID ── */
+    .obras-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .obras-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1.8rem;
+    }
+    .obra-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.8rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .obra-card:hover { border-color: var(--gold-dim); background: #1f1a10; }
+    .obra-card.selected {
+      border-color: var(--gold);
+      background: #1f1a10;
+    }
+    .obra-card.selected::after {
+      content: '✦';
+      position: absolute;
+      top: 0.5rem; right: 0.6rem;
+      color: var(--gold);
+      font-size: 0.75rem;
+    }
+    .obra-num {
+      font-size: 0.65rem;
+      color: var(--gold-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.2rem;
+    }
+    .obra-nombre {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      color: var(--text);
+    }
 
-  .header-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(200,146,58,0.12);
-    border: 1px solid rgba(200,146,58,0.35);
-    color: var(--oro-claro);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    border-radius: var(--radio-pill);
-    margin-bottom: 1.4rem;
-  }
+    /* ── FORM ── */
+    .form-group { margin-bottom: 1.2rem; }
+    label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--gold-dim); }
+    textarea { resize: vertical; min-height: 80px; }
+    input::placeholder, textarea::placeholder { color: var(--text-dim); }
 
-  .header-title {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(28px, 6vw, 44px);
-    font-weight: 400;
-    color: var(--crema);
-    line-height: 1.1;
-    margin-bottom: 0.3rem;
-    letter-spacing: -0.01em;
-  }
+    .btn-votar {
+      width: 100%;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+    .btn-votar:hover { background: var(--gold-light); }
+    .btn-votar:active { transform: scale(0.99); }
+    .btn-votar:disabled { background: var(--gold-dim); cursor: not-allowed; }
 
-  .header-title .highlight {
-    font-style: italic;
-    color: var(--oro-claro);
-  }
+    /* ── MENSAJES ── */
+    .mensaje {
+      display: none;
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .mensaje.show { display: block; }
+    .mensaje.error { background: #1f0a0a; border: 1px solid var(--error); color: #e88; }
+    .mensaje.warning { background: #1a140a; border: 1px solid var(--gold-dim); color: var(--gold-light); }
+    .mensaje.success-msg { background: #0a1f12; border: 1px solid var(--success); color: #7de0a8; }
 
-  .header-gallery-name {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(18px, 3.5vw, 26px);
-    font-style: italic;
-    color: var(--oro);
-    margin-bottom: 1.4rem;
-    font-weight: 400;
-  }
+    /* ── PANTALLAS ESPECIALES ── */
+    .pantalla-especial {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    .pantalla-especial.show { display: block; }
+    .pantalla-especial .icono { font-size: 3rem; margin-bottom: 1rem; }
+    .pantalla-especial h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+    .pantalla-especial p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      max-width: 380px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
 
-  .header-ornament {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 1.4rem;
-  }
-  .orn-line { flex: 1; max-width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--oro), transparent); }
-  .orn-diamond { color: var(--oro); font-size: 12px; }
+    /* ── ADMIN ── */
+    .admin-login { max-width: 380px; margin: 2rem auto; }
+    .admin-login h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
 
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 6px 16px;
-    border-radius: var(--radio-pill);
-    letter-spacing: 0.04em;
-  }
-  .status-pill.open {
-    background: rgba(45,106,79,0.25);
-    border: 1px solid rgba(45,106,79,0.6);
-    color: #86EFB8;
-  }
-  .status-pill.closed {
-    background: rgba(155,28,28,0.2);
-    border: 1px solid rgba(155,28,28,0.5);
-    color: #FCA5A5;
-  }
-  .pulse-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #86EFB8;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--gold);
+    }
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
 
-  /* ── PANTALLA CERRADA ── */
-  .closed-screen {
-    display: none;
-    text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(200,146,58,0.04);
-    border: 1px solid rgba(200,146,58,0.2);
-    border-radius: var(--radio);
-    margin-bottom: 2rem;
-  }
-  .closed-screen .cs-icon {
-    font-size: 52px;
-    margin-bottom: 1.2rem;
-    color: var(--oro);
-    opacity: 0.7;
-  }
-  .closed-screen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--crema);
-    margin-bottom: 0.8rem;
-  }
-  .closed-screen p { font-size: 15px; color: var(--crema-suave); line-height: 1.7; opacity: 0.8; }
-  .closed-screen em { font-style: italic; color: var(--oro-claro); }
+    .resultados-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+    }
+    .resultado-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .resultado-item.top1 { border-color: #ffd700; }
+    .resultado-item.top2 { border-color: #c0c0c0; }
+    .resultado-item.top3 { border-color: #cd7f32; }
+    .medal { font-size: 1.1rem; min-width: 24px; text-align: center; }
+    .resultado-info { flex: 1; }
+    .resultado-nombre {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .resultado-barra-wrap {
+      background: var(--border);
+      border-radius: 2px;
+      height: 4px;
+      margin-top: 0.4rem;
+      overflow: hidden;
+    }
+    .resultado-barra {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+    .resultado-votos {
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right;
+    }
 
-  /* ── SECCIONES ── */
-  .section-block {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(200,146,58,0.15);
-    border-radius: var(--radio);
-    padding: 1.8rem;
-    margin-bottom: 1.2rem;
-  }
+    .btn-cerrar {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 3px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1.5rem;
+    }
+    .btn-cerrar.cerrar { background: var(--error); color: #fff; }
+    .btn-cerrar.abrir { background: var(--success); color: #000; }
 
-  .section-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--oro);
-    margin-bottom: 1.4rem;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(200,146,58,0.2);
-  }
+    .btn-logout {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--text-dim); color: var(--text); }
 
-  /* ── OBRAS GRID ── */
-  .obras-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 8px;
-    margin-bottom: 1rem;
-  }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
 
-  .obra-tile {
-    border: 1px solid rgba(200,146,58,0.2);
-    border-radius: var(--radio-sm);
-    padding: 12px 10px;
-    background: rgba(200,146,58,0.04);
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .obra-tile::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(200,146,58,0.07);
-    opacity: 0;
-    transition: opacity 0.18s;
-  }
-  .obra-tile:hover { border-color: rgba(200,146,58,0.5); }
-  .obra-tile:hover::before { opacity: 1; }
-  .obra-tile.selected {
-    border: 2px solid var(--oro);
-    background: rgba(200,146,58,0.1);
-  }
-  .obra-tile.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 6px; right: 8px;
-    font-size: 11px;
-    color: var(--oro-claro);
-    font-weight: 500;
-  }
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    footer p {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      line-height: 1.8;
+    }
+    footer p span { color: var(--gold); }
 
-  .obra-num {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    color: var(--oro);
-    opacity: 0.75;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-  .obra-nombre {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 12.5px;
-    color: var(--crema);
-    line-height: 1.4;
-  }
-  .obra-tile.selected .obra-nombre { color: var(--oro-claro); }
+    /* ── LOADING ── */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid #0004;
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-  .obra-elegida-preview {
-    display: none;
-    background: rgba(200,146,58,0.1);
-    border: 1px solid rgba(200,146,58,0.4);
-    border-radius: var(--radio-sm);
-    padding: 12px 16px;
-    margin-top: 0.8rem;
-  }
-  .obra-elegida-preview.show { display: block; }
-  .oep-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--oro); font-weight: 500; margin-bottom: 3px; }
-  .oep-nombre {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 15px;
-    color: var(--crema);
-  }
-
-  /* ── FIELDS ── */
-  .field { margin-bottom: 1.1rem; }
-  .field:last-child { margin-bottom: 0; }
-
-  .field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--crema-suave);
-    letter-spacing: 0.04em;
-    margin-bottom: 7px;
-    opacity: 0.85;
-  }
-  .field label .req { color: var(--oro); margin-left: 2px; }
-
-  .field input,
-  .field textarea {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(200,146,58,0.25);
-    border-radius: var(--radio-sm);
-    color: var(--crema);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    padding: 11px 14px;
-    outline: none;
-    transition: border-color 0.15s, background 0.15s;
-    -webkit-appearance: none;
-  }
-  .field input::placeholder,
-  .field textarea::placeholder { color: rgba(245,237,214,0.3); }
-  .field input:focus,
-  .field textarea:focus {
-    border-color: var(--oro);
-    background: rgba(200,146,58,0.07);
-  }
-  .field textarea { min-height: 80px; resize: vertical; }
-  .field .hint { font-size: 11px; color: rgba(245,237,214,0.4); margin-top: 5px; }
-
-  /* ── BOTÓN VOTAR ── */
-  .btn-votar {
-    width: 100%;
-    padding: 14px;
-    background: var(--oro);
-    color: var(--negro);
-    border: none;
-    border-radius: var(--radio-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    margin-top: 0.5rem;
-  }
-  .btn-votar:hover { background: var(--oro-claro); }
-  .btn-votar:active { transform: scale(0.99); }
-  .btn-votar:disabled {
-    background: rgba(200,146,58,0.2);
-    color: rgba(245,237,214,0.3);
-    cursor: not-allowed;
-    border: 1px solid rgba(200,146,58,0.15);
-  }
-
-  /* ── MENSAJES ── */
-  .msg-box {
-    display: none;
-    padding: 13px 16px;
-    border-radius: var(--radio-sm);
-    font-size: 13.5px;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-  .msg-box strong { display: block; margin-bottom: 2px; font-weight: 500; }
-  .msg-box.warn { display: block; background: rgba(202,138,4,0.15); border: 1px solid rgba(202,138,4,0.4); color: #FDE68A; }
-  .msg-box.err { display: block; background: rgba(155,28,28,0.15); border: 1px solid rgba(155,28,28,0.4); color: #FCA5A5; }
-
-  /* ── PANTALLA ÉXITO ── */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 3rem 1.5rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(200,146,58,0.2);
-    border-radius: var(--radio);
-    margin-bottom: 1.2rem;
-  }
-  .success-screen .ss-check {
-    width: 68px; height: 68px;
-    border-radius: 50%;
-    background: rgba(45,106,79,0.25);
-    border: 1px solid rgba(45,106,79,0.5);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px;
-    margin: 0 auto 1.4rem;
-    color: #86EFB8;
-  }
-  .success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 400;
-    color: var(--crema);
-    margin-bottom: 0.6rem;
-  }
-  .success-screen .ss-obra {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: var(--oro-claro);
-    margin-bottom: 0.8rem;
-  }
-  .success-screen p { font-size: 14px; color: rgba(245,237,214,0.6); line-height: 1.7; }
-
-  /* ── DIVISOR ── */
-  .divider { height: 1px; background: rgba(200,146,58,0.12); margin: 1.4rem 0; }
-
-  /* ── ADMIN ── */
-  .admin-toggle-wrap { text-align: center; padding: 1.5rem 0 0.5rem; }
-  .admin-toggle-btn {
-    background: none;
-    border: none;
-    color: rgba(245,237,214,0.3);
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    letter-spacing: 0.06em;
-    transition: color 0.15s;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    padding: 6px 12px;
-  }
-  .admin-toggle-btn:hover { color: var(--oro); }
-
-  .admin-area { display: none; }
-  .admin-area.open { display: block; }
-
-  .btn-secondary {
-    padding: 9px 18px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(200,146,58,0.25);
-    border-radius: var(--radio-sm);
-    color: var(--crema-suave);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
-
-  .btn-danger {
-    padding: 9px 18px;
-    background: rgba(155,28,28,0.2);
-    border: 1px solid rgba(155,28,28,0.45);
-    border-radius: var(--radio-sm);
-    color: #FCA5A5;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-danger:hover { background: rgba(155,28,28,0.35); }
-
-  .btn-success {
-    display: none;
-    padding: 9px 18px;
-    background: rgba(45,106,79,0.2);
-    border: 1px solid rgba(45,106,79,0.45);
-    border-radius: var(--radio-sm);
-    color: #86EFB8;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-success:hover { background: rgba(45,106,79,0.35); }
-
-  .admin-ctrl-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; align-items: center; }
-
-  /* ── ESTADÍSTICAS ── */
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.4rem; }
-  .stat-box {
-    background: rgba(200,146,58,0.07);
-    border: 1px solid rgba(200,146,58,0.15);
-    border-radius: var(--radio-sm);
-    padding: 14px 10px;
-    text-align: center;
-  }
-  .stat-box .sn { font-size: 28px; font-weight: 500; color: var(--oro-claro); line-height: 1; }
-  .stat-box .sl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(245,237,214,0.45); margin-top: 5px; }
-
-  /* ── RESULTADOS ── */
-  .result-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 0;
-    border-bottom: 1px solid rgba(200,146,58,0.1);
-    font-size: 13px;
-  }
-  .result-item:last-child { border-bottom: none; }
-  .ri-pos {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: rgba(200,146,58,0.1);
-    border: 1px solid rgba(200,146,58,0.25);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 500;
-    color: var(--oro);
-    flex-shrink: 0;
-  }
-  .ri-pos.gold { background: var(--oro); color: var(--negro); border-color: var(--oro); }
-  .ri-pos.silver { background: rgba(180,180,180,0.2); color: #D1D5DB; border-color: rgba(180,180,180,0.35); }
-  .ri-pos.bronze { background: rgba(139,94,30,0.25); color: #D4A76A; border-color: rgba(139,94,30,0.4); }
-  .ri-name {
-    flex: 1;
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 13px;
-    color: var(--crema);
-    min-width: 0;
-  }
-  .ri-bar-wrap { width: 80px; height: 5px; background: rgba(200,146,58,0.12); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
-  .ri-bar-fill { height: 100%; background: var(--oro); border-radius: 3px; transition: width 0.6s ease; }
-  .ri-count { font-size: 12px; font-weight: 500; color: var(--oro-claro); min-width: 56px; text-align: right; flex-shrink: 0; }
-
-  /* ── VOTOS PENDIENTES ── */
-  .pending-item {
-    background: rgba(200,146,58,0.05);
-    border: 1px solid rgba(200,146,58,0.15);
-    border-radius: var(--radio-sm);
-    padding: 12px 14px;
-    margin-bottom: 8px;
-  }
-  .pi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-  .pi-obra {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: var(--crema);
-  }
-  .pi-badge {
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: var(--radio-pill);
-    background: rgba(202,138,4,0.2);
-    color: #FDE68A;
-    border: 1px solid rgba(202,138,4,0.35);
-    white-space: nowrap;
-    flex-shrink: 0;
-    margin-left: 8px;
-  }
-  .pi-meta { font-size: 12px; color: rgba(245,237,214,0.45); margin-bottom: 8px; display: flex; gap: 16px; }
-  .pi-actions { display: flex; gap: 8px; }
-  .btn-xs {
-    font-size: 12px;
-    padding: 5px 13px;
-    border-radius: var(--radio-sm);
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: background 0.12s;
-    border: 1px solid transparent;
-  }
-  .btn-xs.approve {
-    background: rgba(45,106,79,0.2);
-    color: #86EFB8;
-    border-color: rgba(45,106,79,0.4);
-  }
-  .btn-xs.approve:hover { background: rgba(45,106,79,0.35); }
-  .btn-xs.reject {
-    background: rgba(155,28,28,0.15);
-    color: #FCA5A5;
-    border-color: rgba(155,28,28,0.35);
-  }
-  .btn-xs.reject:hover { background: rgba(155,28,28,0.3); }
-
-  /* ── FOOTER ── */
-  .site-footer {
-    text-align: center;
-    padding: 2.5rem 1rem 1rem;
-    border-top: 1px solid rgba(200,146,58,0.12);
-    margin-top: 2rem;
-    font-size: 12px;
-    color: rgba(245,237,214,0.3);
-    letter-spacing: 0.04em;
-  }
-  .site-footer em { font-style: italic; color: rgba(200,146,58,0.6); }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--negro); }
-  ::-webkit-scrollbar-thumb { background: rgba(200,146,58,0.3); border-radius: 3px; }
-
-  @media (max-width: 480px) {
-    .obras-grid { grid-template-columns: repeat(2, 1fr); }
-    .stats-row { grid-template-columns: repeat(3, 1fr); }
-    .section-block { padding: 1.3rem; }
-    .ri-bar-wrap { display: none; }
-  }
-</style>
+    @media (max-width: 480px) {
+      .obras-grid { grid-template-columns: 1fr; }
+      .stat-cards { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="page-wrap">
+<header>
+  <div class="header-badge">SENA · 2026</div>
+  <h1>Galería <span>Expresando Arte</span></h1>
+  <p class="subtitle">Concurso de Arte Afrocolombiano</p>
+  <div class="status-badge" id="statusBadge">
+    <span class="dot"></span>
+    <span id="statusText">Votaciones abiertas</span>
+  </div>
+</header>
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="header-eyebrow">✦ SENA — Concurso de Arte 2026 ✦</div>
-    <h1 class="header-title">Galería <span class="highlight">Expresando Arte</span></h1>
-    <p class="header-gallery-name">Una celebración de identidad y cultura afrocolombiana</p>
-    <div class="header-ornament">
-      <div class="orn-line"></div>
-      <span class="orn-diamond">◆</span>
-      <div class="orn-line"></div>
-    </div>
-    <div class="status-pill open" id="status-open">
-      <div class="pulse-dot"></div>
-      Votaciones abiertas
-    </div>
-    <div class="status-pill closed" id="status-closed" style="display:none;">
-      🔒 Votaciones cerradas
-    </div>
-  </header>
+<nav>
+  <button class="active" onclick="showTab('votar')">✦ Votar</button>
+  <button onclick="showTab('admin')">Administrador</button>
+</nav>
 
-  <!-- PANTALLA CERRADA -->
-  <div class="closed-screen" id="closed-screen">
-    <div class="cs-icon">🔒</div>
-    <h2>Las votaciones han cerrado</h2>
-    <p>
-      Gracias por tu interés en la <em>Galería Expresando Arte</em>.<br>
-      Te invitamos a estar pendiente de los resultados del concurso.<br><br>
-      ¡Pronto sabremos qué obra se llevó el corazón del SENA!
-    </p>
+<!-- ══════════════ SECCIÓN VOTAR ══════════════ -->
+<section id="tab-votar" class="active">
+
+  <!-- Pantalla: votaciones cerradas -->
+  <div class="pantalla-especial" id="pantallaCerrada">
+    <div class="icono">🔒</div>
+    <h2>Votaciones cerradas</h2>
+    <p>Las votaciones han finalizado. Te invitamos a estar pendiente de los resultados del concurso. ¡Gracias por participar!</p>
   </div>
 
-  <!-- FORMULARIO DE VOTACIÓN -->
-  <div id="voting-section">
-
-    <div id="msg-dup" class="msg-box warn" style="display:none;">
-      <strong>⚠️ Ya registraste tu voto anteriormente.</strong>
-      Lastimosamente no puedes volver a votar porque ya lo hiciste. Solo se permite un voto por cédula en este concurso.
-    </div>
-    <div id="msg-cedula-np" class="msg-box err" style="display:none;">
-      <strong>❌ Cédula no habilitada.</strong>
-      Tu número de cédula no se encuentra en la lista de aprendices registrados para votar en este concurso.
-    </div>
-    <div id="msg-campos" class="msg-box err" style="display:none;"></div>
-
-    <div class="section-block" id="form-card">
-
-      <!-- OBRAS -->
-      <div class="section-label">🎨 Elige tu obra favorita</div>
-      <div class="obras-grid" id="obras-grid"></div>
-      <div class="obra-elegida-preview" id="obra-preview">
-        <div class="oep-label">Tu elección</div>
-        <div class="oep-nombre" id="oep-nombre"></div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- DATOS -->
-      <div class="section-label">📋 Tus datos</div>
-      <div class="field">
-        <label>Número de ficha <span class="req">*</span></label>
-        <input type="text" id="inp-ficha" placeholder="Ej: 2815340" maxlength="10" inputmode="numeric" />
-        <div class="hint">El número de ficha asignado por el SENA</div>
-      </div>
-      <div class="field">
-        <label>Número de cédula <span class="req">*</span></label>
-        <input type="text" id="inp-cedula" placeholder="Ej: 1234567890" maxlength="12" inputmode="numeric" oninput="limpiarMensajes()" />
-        <div class="hint">Solo dígitos, sin espacios ni puntos</div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- DESCRIPCIÓN -->
-      <div class="section-label">💬 Tu opinión <span style="font-size:10px;color:rgba(245,237,214,0.35);font-weight:300;text-transform:none;letter-spacing:0;">(opcional)</span></div>
-      <div class="field">
-        <label>¿Por qué merece ganar esta obra?</label>
-        <textarea id="inp-desc" placeholder="Cuéntanos qué te transmite esta obra, por qué te llega al corazón..."></textarea>
-      </div>
-
-      <button class="btn-votar" id="btn-votar" onclick="emitirVoto()">
-        ✦ Emitir mi voto
-      </button>
-
-    </div>
-
-    <!-- PANTALLA ÉXITO -->
-    <div class="success-screen" id="success-screen">
-      <div class="ss-check">✓</div>
-      <h2>¡Voto registrado!</h2>
-      <div class="ss-obra" id="ss-obra-nombre"></div>
-      <p>
-        Tu participación ha quedado registrada en la<br>
-        <em style="color:var(--oro-claro);">Galería Expresando Arte 2026</em>.<br><br>
-        Los resultados serán anunciados próximamente. ¡Gracias por participar!
-      </p>
-    </div>
-
+  <!-- Pantalla: ya votó -->
+  <div class="pantalla-especial" id="pantallaYaVoto">
+    <div class="icono">✅</div>
+    <h2>¡Gracias por votar!</h2>
+    <p>Tu voto ha sido registrado exitosamente. Recuerda que solo se permite un voto por aprendiz.</p>
   </div>
 
-  <!-- ADMIN TOGGLE -->
-  <div class="admin-toggle-wrap">
-    <button class="admin-toggle-btn" onclick="toggleAdmin()">⚙ Administrador</button>
-  </div>
+  <!-- Formulario de votación -->
+  <div id="formularioVotar">
 
-  <!-- PANEL ADMIN -->
-  <div class="admin-area" id="admin-area">
+    <p class="obras-label">Selecciona la obra de tu preferencia</p>
+    <div class="obras-grid" id="obrasGrid"></div>
 
-    <!-- LOGIN -->
-    <div class="section-block" id="admin-login">
-      <div class="section-label">🔐 Acceso al panel</div>
-      <div class="field">
-        <label>Contraseña de administrador</label>
-        <input type="password" id="inp-pass" placeholder="Ingresa la contraseña" onkeydown="if(event.key==='Enter')adminLogin()" />
-      </div>
-      <button class="btn-votar" onclick="adminLogin()">Entrar al panel</button>
-      <div id="msg-pass" class="msg-box err" style="margin-top:0.8rem;"></div>
+    <hr class="divider"/>
+
+    <div class="form-group">
+      <label>Número de documento</label>
+      <input type="text" id="cedula" placeholder="Ej: 1038106287" inputmode="numeric"/>
+    </div>
+    <div class="form-group">
+      <label>Número de ficha</label>
+      <input type="text" id="ficha" placeholder="Ej: 3188913" inputmode="numeric"/>
+    </div>
+    <div class="form-group">
+      <label>¿Por qué votas por esta obra? <span style="color:var(--text-dim);font-size:0.75rem;text-transform:none;letter-spacing:0">(opcional)</span></label>
+      <textarea id="descripcion" placeholder="Comparte tu opinión sobre la obra..."></textarea>
     </div>
 
-    <!-- DASHBOARD -->
-    <div class="section-block" id="admin-dash" style="display:none;">
-      <div class="section-label">📊 Panel de control</div>
+    <!-- Mensajes -->
+    <div class="mensaje error" id="msgCampos">Por favor completa todos los campos requeridos y selecciona una obra.</div>
+    <div class="mensaje error" id="msgNoHabilitado">⚠️ Lastimosamente tu número de documento no está en la lista de aprendices habilitados para votar.</div>
+    <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, porque ya lo hiciste. Solo se permite un voto por aprendiz.</div>
+    <div class="mensaje success-msg" id="msgExito">✦ ¡Tu voto ha sido registrado exitosamente!</div>
 
-      <div class="admin-ctrl-row">
-        <button class="btn-danger" id="btn-cerrar" onclick="toggleVotacion(false)">🔒 Cerrar votaciones</button>
-        <button class="btn-success" id="btn-abrir" onclick="toggleVotacion(true)">🔓 Abrir votaciones</button>
-        <button class="btn-secondary" onclick="adminLogout()">Salir</button>
-      </div>
+    <button class="btn-votar" id="btnVotar" onclick="emitirVoto()">✦ Emitir mi voto</button>
+  </div>
+</section>
 
-      <div class="stats-row">
-        <div class="stat-box"><div class="sn" id="st-total">0</div><div class="sl">Votos totales</div></div>
-        <div class="stat-box"><div class="sn" id="st-obras">11</div><div class="sl">Obras en concurso</div></div>
-        <div class="stat-box"><div class="sn" id="st-lider">—</div><div class="sl">Obra líder</div></div>
-      </div>
+<!-- ══════════════ SECCIÓN ADMIN ══════════════ -->
+<section id="tab-admin">
 
-      <div class="section-label" style="margin-bottom:1rem;">Resultados en vivo</div>
-      <div id="results-list"></div>
+  <!-- Login admin -->
+  <div class="admin-login" id="adminLogin">
+    <h2>Acceso Administrador</h2>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginAdmin()"/>
     </div>
-
+    <div class="mensaje error" id="msgPassError">Contraseña incorrecta.</div>
+    <button class="btn-votar" onclick="loginAdmin()">Ingresar</button>
   </div>
 
-  <footer class="site-footer">
-    <div style="margin-bottom:0.6rem; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(200,146,58,0.5);">Evento organizado por</div>
-    <div style="font-size:14px; font-weight:500; color:rgba(200,146,58,0.85); margin-bottom:0.5rem; letter-spacing:0.06em;">Bienestar al Aprendiz</div>
-    <div class="orn-line" style="max-width:60px; margin:0.6rem auto;"></div>
-    <em>Galería Expresando Arte</em> — SENA 2026<br>
-    Complejo Tecnológico para la Gestión Agroempresarial · Caucasia, Antioquia
-  </footer>
+  <!-- Panel admin -->
+  <div id="adminPanel" style="display:none">
 
-</div>
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-num" id="totalVotos">—</div>
+        <div class="stat-label">Votos totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">11</div>
+        <div class="stat-label">Obras</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="obraLider">—</div>
+        <div class="stat-label">Obra líder</div>
+      </div>
+    </div>
+
+    <p class="resultados-label">Resultados en tiempo real</p>
+    <div id="resultadosAdmin"></div>
+
+    <button class="btn-cerrar cerrar" id="btnEstado" onclick="toggleVotacion()">🔒 Cerrar votaciones</button>
+    <button class="btn-logout" onclick="logoutAdmin()">Cerrar sesión</button>
+  </div>
+</section>
+
+<footer>
+  <p><span>Evento organizado por Bienestar al Aprendiz</span></p>
+  <p>SENA · Galería Expresando Arte · Concurso de Arte 2026</p>
+</footer>
 
 <script>
+  // ── SUPABASE ──
+  const SUPABASE_URL = 'https://kugbnlgzyoxuzsqoccnc.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1Z2JubGd6eW94dXpzcW9jY25jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMjY3MDQsImV4cCI6MjA5NDkwMjcwNH0.H3YU6HhauOpX-jQ7HBxLcfC14YrTI5J3AV-Mq5vxtDc';
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ── OBRAS ──
   const OBRAS = [
-    {id:1,  nombre:'Carta de afrocolombianidad'},
-    {id:2,  nombre:'La Tierra Habita en Ella'},
-    {id:3,  nombre:'Reunión familiar'},
-    {id:4,  nombre:'El Latido de la Tierra y el Río'},
-    {id:5,  nombre:'Tejido de una Historia'},
-    {id:6,  nombre:'Color de la resistencia'},
-    {id:7,  nombre:'Herencia viva'},
-    {id:8,  nombre:'La sombra de Eva'},
-    {id:9,  nombre:'El amor de Colombia'},
-    {id:10, nombre:'Orgullo Afrocolombiano'},
-    {id:11, nombre:'Todos somos un color'},
+    'Carta de afrocolombianidad',
+    '"La Tierra Habita en Ella"',
+    'Reunión familiar',
+    'El Latido de la Tierra y el Río',
+    'Tejido de una Historia',
+    'Color de la resistencia',
+    'Herencia viva',
+    'La sombra de Eva',
+    'El amor de colombia',
+    'Orgullo Afrocolombiano',
+    'Todos somos un color'
   ];
 
   const ADMIN_PASS = 'sena2026';
-
   let obraSeleccionada = null;
   let votacionAbierta = true;
-  let adminLogueado = false;
-  let votos = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0};
-  let cedulas = new Set();
 
-  function buildGrid() {
-    const g = document.getElementById('obras-grid');
-    g.innerHTML = OBRAS.map(o => `
-      <div class="obra-tile" id="tile-${o.id}" onclick="seleccionarObra(${o.id})">
-        <div class="obra-num">Obra ${o.id}</div>
-        <div class="obra-nombre">${o.nombre}</div>
+  // ── INIT ──
+  async function init() {
+    renderObras();
+    await checkEstadoVotacion();
+  }
+
+  function renderObras() {
+    const grid = document.getElementById('obrasGrid');
+    grid.innerHTML = OBRAS.map((nombre, i) => `
+      <div class="obra-card" id="obra-${i}" onclick="seleccionarObra(${i}, '${nombre.replace(/'/g,"\\'")}')">
+        <div class="obra-num">Obra ${String(i+1).padStart(2,'0')}</div>
+        <div class="obra-nombre">${nombre}</div>
       </div>
     `).join('');
   }
 
-  function seleccionarObra(id) {
-    obraSeleccionada = id;
-    document.querySelectorAll('.obra-tile').forEach(t => t.classList.remove('selected'));
-    document.getElementById('tile-'+id).classList.add('selected');
-    const o = OBRAS.find(x => x.id === id);
-    document.getElementById('oep-nombre').textContent = o.nombre;
-    document.getElementById('obra-preview').classList.add('show');
-    limpiarMensajes();
+  function seleccionarObra(idx, nombre) {
+    document.querySelectorAll('.obra-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('obra-'+idx).classList.add('selected');
+    obraSeleccionada = nombre;
   }
 
-  function limpiarMensajes() {
-    document.getElementById('msg-dup').style.display = 'none';
-    document.getElementById('msg-cedula-np').style.display = 'none';
-    document.getElementById('msg-campos').style.display = 'none';
+  async function checkEstadoVotacion() {
+    const { data } = await db.from('configuracion').select('valor').eq('clave','votacion_abierta').single();
+    votacionAbierta = data?.valor === 'true';
+    actualizarUIEstado();
   }
 
-  function emitirVoto() {
-    limpiarMensajes();
-    const ficha = document.getElementById('inp-ficha').value.trim();
-    const cedula = document.getElementById('inp-cedula').value.trim();
+  function actualizarUIEstado() {
+    const badge = document.getElementById('statusBadge');
+    const texto = document.getElementById('statusText');
+    const cerrada = document.getElementById('pantallaCerrada');
+    const formulario = document.getElementById('formularioVotar');
+    const yaVoto = document.getElementById('pantallaYaVoto');
 
-    if (!obraSeleccionada || !ficha || !cedula) {
-      const m = document.getElementById('msg-campos');
-      m.textContent = '⚠️ Por favor selecciona una obra y completa los campos de ficha y cédula.';
-      m.style.display = 'block';
-      return;
-    }
-    if (!/^\d{6,12}$/.test(cedula)) {
-      const m = document.getElementById('msg-campos');
-      m.textContent = '⚠️ El número de cédula no es válido. Debe tener entre 6 y 12 dígitos.';
-      m.style.display = 'block';
-      return;
-    }
-    if (cedulas.has(cedula)) {
-      document.getElementById('msg-dup').style.display = 'block';
-      document.getElementById('msg-dup').scrollIntoView({behavior:'smooth', block:'center'});
-      return;
-    }
-
-    // Registrar voto automáticamente
-    cedulas.add(cedula);
-    votos[obraSeleccionada] = (votos[obraSeleccionada]||0) + 1;
-
-    const o = OBRAS.find(x => x.id === obraSeleccionada);
-    document.getElementById('ss-obra-nombre').textContent = '"' + o.nombre + '"';
-    document.getElementById('form-card').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-
-    if (adminLogueado) renderAdmin();
-  }
-
-  function toggleVotacion(abrir) {
-    votacionAbierta = abrir;
-    document.getElementById('status-open').style.display = abrir ? 'inline-flex' : 'none';
-    document.getElementById('status-closed').style.display = abrir ? 'none' : 'inline-flex';
-    document.getElementById('closed-screen').style.display = abrir ? 'none' : 'block';
-    document.getElementById('voting-section').style.display = abrir ? 'block' : 'none';
-    document.getElementById('btn-cerrar').style.display = abrir ? 'inline-block' : 'none';
-    document.getElementById('btn-abrir').style.display = abrir ? 'none' : 'inline-block';
-    if (adminLogueado) renderAdmin();
-  }
-
-  function toggleAdmin() {
-    document.getElementById('admin-area').classList.toggle('open');
-  }
-
-  function adminLogin() {
-    const pass = document.getElementById('inp-pass').value;
-    if (pass === ADMIN_PASS) {
-      adminLogueado = true;
-      document.getElementById('admin-login').style.display = 'none';
-      document.getElementById('admin-dash').style.display = 'block';
-      renderAdmin();
+    if (!votacionAbierta) {
+      cerrada.classList.add('show');
+      formulario.style.display = 'none';
+      yaVoto.classList.remove('show');
+      badge.style.color = '#c94c4c';
+      badge.querySelector('.dot').style.background = '#c94c4c';
+      badge.querySelector('.dot').style.animation = 'none';
+      texto.textContent = 'Votaciones cerradas';
     } else {
-      const m = document.getElementById('msg-pass');
-      m.textContent = '❌ Contraseña incorrecta. Intenta de nuevo.';
-      m.style.display = 'block';
+      cerrada.classList.remove('show');
+      formulario.style.display = 'block';
+      badge.style.color = 'var(--success)';
+      badge.querySelector('.dot').style.background = 'var(--success)';
+      badge.querySelector('.dot').style.animation = 'pulse 1.5s infinite';
+      texto.textContent = 'Votaciones abiertas';
     }
   }
 
-  function adminLogout() {
-    adminLogueado = false;
-    document.getElementById('admin-login').style.display = 'block';
-    document.getElementById('admin-dash').style.display = 'none';
-    document.getElementById('inp-pass').value = '';
-    document.getElementById('msg-pass').style.display = 'none';
+  // ── VOTAR ──
+  async function emitirVoto() {
+    ocultarMensajes();
+
+    const cedula = document.getElementById('cedula').value.trim();
+    const ficha  = document.getElementById('ficha').value.trim();
+    const desc   = document.getElementById('descripcion').value.trim();
+
+    if (!obraSeleccionada || !cedula || !ficha) {
+      document.getElementById('msgCampos').classList.add('show');
+      return;
+    }
+
+    const btn = document.getElementById('btnVotar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Registrando...';
+
+    // 1. Verificar que la cédula esté habilitada
+    const { data: aprendiz, error: errApr } = await db
+      .from('aprendices')
+      .select('numero_documento')
+      .eq('numero_documento', cedula)
+      .single();
+
+    if (!aprendiz) {
+      document.getElementById('msgNoHabilitado').classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '✦ Emitir mi voto';
+      return;
+    }
+
+    // 2. Verificar si ya votó
+    const { data: votoExistente } = await db
+      .from('votos')
+      .select('id')
+      .eq('numero_documento', cedula)
+      .single();
+
+    if (votoExistente) {
+      document.getElementById('msgYaVoto').classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '✦ Emitir mi voto';
+      return;
+    }
+
+    // 3. Registrar voto
+    const { error: errVoto } = await db.from('votos').insert({
+      numero_documento: cedula,
+      obra: obraSeleccionada,
+      ficha: ficha,
+      descripcion: desc || null
+    });
+
+    if (errVoto) {
+      // Por si acaso hubo doble envío simultáneo
+      if (errVoto.code === '23505') {
+        document.getElementById('msgYaVoto').classList.add('show');
+      } else {
+        document.getElementById('msgCampos').textContent = 'Error al registrar el voto. Intenta de nuevo.';
+        document.getElementById('msgCampos').classList.add('show');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '✦ Emitir mi voto';
+      return;
+    }
+
+    // Éxito
+    document.getElementById('formularioVotar').style.display = 'none';
+    document.getElementById('pantallaYaVoto').classList.add('show');
   }
 
-  function renderAdmin() {
-    const total = Object.values(votos).reduce((a,b)=>a+b,0);
-    const sorted = OBRAS.slice().sort((a,b)=>(votos[b.id]||0)-(votos[a.id]||0));
-    const lider = sorted[0];
-    const liderVotos = votos[lider.id]||0;
-
-    document.getElementById('st-total').textContent = total;
-    document.getElementById('st-lider').textContent = liderVotos > 0 ? lider.id : '—';
-
-    const maxV = liderVotos || 1;
-    const resList = document.getElementById('results-list');
-    resList.innerHTML = sorted.map((o,i) => {
-      const v = votos[o.id]||0;
-      const pct = Math.round(v/maxV*100);
-      const posClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
-      return `<div class="result-item">
-        <div class="ri-pos ${posClass}">${i+1}</div>
-        <div class="ri-name">${o.nombre}</div>
-        <div class="ri-bar-wrap"><div class="ri-bar-fill" style="width:${pct}%"></div></div>
-        <div class="ri-count">${v} voto${v!==1?'s':''}</div>
-      </div>`;
-    }).join('');
+  function ocultarMensajes() {
+    document.querySelectorAll('.mensaje').forEach(m => m.classList.remove('show'));
   }
 
-  buildGrid();
+  // ── ADMIN ──
+  function loginAdmin() {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_PASS) {
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      cargarResultados();
+    } else {
+      document.getElementById('msgPassError').classList.add('show');
+    }
+  }
+
+  function logoutAdmin() {
+    document.getElementById('adminLogin').style.display = 'block';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('msgPassError').classList.remove('show');
+  }
+
+  async function cargarResultados() {
+    const { data: votos } = await db.from('votos').select('obra');
+    await checkEstadoVotacion();
+
+    const conteo = {};
+    OBRAS.forEach(o => conteo[o] = 0);
+    (votos || []).forEach(v => { if (conteo[v.obra] !== undefined) conteo[v.obra]++; });
+
+    const total = votos?.length || 0;
+    document.getElementById('totalVotos').textContent = total;
+
+    const sorted = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+    document.getElementById('obraLider').textContent = sorted[0][1] > 0 ? (OBRAS.indexOf(sorted[0][0])+1) : '—';
+
+    const medals = ['🥇','🥈','🥉'];
+    const topClasses = ['top1','top2','top3'];
+    const maxVotos = sorted[0][1] || 1;
+
+    document.getElementById('resultadosAdmin').innerHTML = sorted.map(([obra, votos], i) => `
+      <div class="resultado-item ${topClasses[i]||''}">
+        <div class="medal">${medals[i]||''}</div>
+        <div class="resultado-info">
+          <div class="resultado-nombre">${obra}</div>
+          <div class="resultado-barra-wrap">
+            <div class="resultado-barra" style="width:${(votos/maxVotos*100)||0}%"></div>
+          </div>
+        </div>
+        <div class="resultado-votos">${votos}</div>
+      </div>
+    `).join('');
+
+    // Botón estado
+    const btn = document.getElementById('btnEstado');
+    if (votacionAbierta) {
+      btn.textContent = '🔒 Cerrar votaciones';
+      btn.className = 'btn-cerrar cerrar';
+    } else {
+      btn.textContent = '🔓 Abrir votaciones';
+      btn.className = 'btn-cerrar abrir';
+    }
+  }
+
+  async function toggleVotacion() {
+    const nuevoEstado = votacionAbierta ? 'false' : 'true';
+    await db.from('configuracion').update({ valor: nuevoEstado }).eq('clave','votacion_abierta');
+    votacionAbierta = !votacionAbierta;
+    actualizarUIEstado();
+    await cargarResultados();
+  }
+
+  // ── TABS ──
+  function showTab(tab) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    event.target.classList.add('active');
+    if (tab === 'admin') cargarResultados();
+  }
+
+  init();
 </script>
 </body>
 </html>
