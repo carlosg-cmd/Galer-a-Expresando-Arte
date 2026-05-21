@@ -607,15 +607,15 @@
   <!-- FORMULARIO DE VOTACIÓN -->
   <div id="voting-section">
 
-    <div id="msg-dup" class="msg-box warn">
+    <div id="msg-dup" class="msg-box warn" style="display:none;">
       <strong>⚠️ Ya registraste tu voto anteriormente.</strong>
       Lastimosamente no puedes volver a votar porque ya lo hiciste. Solo se permite un voto por cédula en este concurso.
     </div>
-    <div id="msg-cedula-np" class="msg-box err">
+    <div id="msg-cedula-np" class="msg-box err" style="display:none;">
       <strong>❌ Cédula no habilitada.</strong>
       Tu número de cédula no se encuentra en la lista de aprendices registrados para votar en este concurso.
     </div>
-    <div id="msg-campos" class="msg-box err"></div>
+    <div id="msg-campos" class="msg-box err" style="display:none;"></div>
 
     <div class="section-block" id="form-card">
 
@@ -702,23 +702,20 @@
 
       <div class="stats-row">
         <div class="stat-box"><div class="sn" id="st-total">0</div><div class="sl">Votos totales</div></div>
-        <div class="stat-box"><div class="sn" id="st-val">0</div><div class="sl">Validados</div></div>
-        <div class="stat-box"><div class="sn" id="st-pend">0</div><div class="sl">Pendientes</div></div>
+        <div class="stat-box"><div class="sn" id="st-obras">11</div><div class="sl">Obras en concurso</div></div>
+        <div class="stat-box"><div class="sn" id="st-lider">—</div><div class="sl">Obra líder</div></div>
       </div>
 
       <div class="section-label" style="margin-bottom:1rem;">Resultados en vivo</div>
       <div id="results-list"></div>
-
-      <div class="divider"></div>
-      <div class="section-label" style="margin-bottom:1rem;">Validar votos pendientes</div>
-      <div id="pending-list">
-        <p style="font-size:13px;color:rgba(245,237,214,0.35);">No hay votos pendientes de validación.</p>
-      </div>
     </div>
 
   </div>
 
   <footer class="site-footer">
+    <div style="margin-bottom:0.6rem; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(200,146,58,0.5);">Evento organizado por</div>
+    <div style="font-size:14px; font-weight:500; color:rgba(200,146,58,0.85); margin-bottom:0.5rem; letter-spacing:0.06em;">Bienestar al Aprendiz</div>
+    <div class="orn-line" style="max-width:60px; margin:0.6rem auto;"></div>
     <em>Galería Expresando Arte</em> — SENA 2026<br>
     Complejo Tecnológico para la Gestión Agroempresarial · Caucasia, Antioquia
   </footer>
@@ -746,12 +743,8 @@
   let votacionAbierta = true;
   let adminLogueado = false;
   let votos = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0};
-  let votosValidados = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0};
   let cedulas = new Set();
-  let pendientes = [];
-  let votosPendCount = 0;
 
-  // Construir grid de obras
   function buildGrid() {
     const g = document.getElementById('obras-grid');
     g.innerHTML = OBRAS.map(o => `
@@ -782,7 +775,6 @@
     limpiarMensajes();
     const ficha = document.getElementById('inp-ficha').value.trim();
     const cedula = document.getElementById('inp-cedula').value.trim();
-    const desc = document.getElementById('inp-desc').value.trim();
 
     if (!obraSeleccionada || !ficha || !cedula) {
       const m = document.getElementById('msg-campos');
@@ -802,28 +794,14 @@
       return;
     }
 
-    // Registrar voto
+    // Registrar voto automáticamente
     cedulas.add(cedula);
     votos[obraSeleccionada] = (votos[obraSeleccionada]||0) + 1;
-    votosPendCount++;
 
-    // Agregar a pendientes
     const o = OBRAS.find(x => x.id === obraSeleccionada);
-    pendientes.push({
-      id: Date.now(),
-      obra: o.nombre,
-      obraId: obraSeleccionada,
-      ficha: ficha,
-      cedula: cedula.replace(/(\d{2})\d+(\d{2})/, '$1•••••$2'),
-      desc: desc,
-      validado: false
-    });
-
-    // Mostrar éxito
     document.getElementById('ss-obra-nombre').textContent = '"' + o.nombre + '"';
     document.getElementById('form-card').style.display = 'none';
     document.getElementById('success-screen').style.display = 'block';
-    document.getElementById('msg-campos').style.display = 'none';
 
     if (adminLogueado) renderAdmin();
   }
@@ -840,8 +818,7 @@
   }
 
   function toggleAdmin() {
-    const area = document.getElementById('admin-area');
-    area.classList.toggle('open');
+    document.getElementById('admin-area').classList.toggle('open');
   }
 
   function adminLogin() {
@@ -868,21 +845,19 @@
 
   function renderAdmin() {
     const total = Object.values(votos).reduce((a,b)=>a+b,0);
-    const validados = Object.values(votosValidados).reduce((a,b)=>a+b,0);
-    const pend = pendientes.filter(p=>!p.validado).length;
+    const sorted = OBRAS.slice().sort((a,b)=>(votos[b.id]||0)-(votos[a.id]||0));
+    const lider = sorted[0];
+    const liderVotos = votos[lider.id]||0;
 
     document.getElementById('st-total').textContent = total;
-    document.getElementById('st-val').textContent = validados;
-    document.getElementById('st-pend').textContent = pend;
+    document.getElementById('st-lider').textContent = liderVotos > 0 ? lider.id : '—';
 
-    // Resultados
-    const sorted = OBRAS.slice().sort((a,b)=>(votos[b.id]||0)-(votos[a.id]||0));
-    const maxV = votos[sorted[0].id]||1;
+    const maxV = liderVotos || 1;
     const resList = document.getElementById('results-list');
     resList.innerHTML = sorted.map((o,i) => {
       const v = votos[o.id]||0;
       const pct = Math.round(v/maxV*100);
-      let posClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const posClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
       return `<div class="result-item">
         <div class="ri-pos ${posClass}">${i+1}</div>
         <div class="ri-name">${o.nombre}</div>
@@ -890,43 +865,6 @@
         <div class="ri-count">${v} voto${v!==1?'s':''}</div>
       </div>`;
     }).join('');
-
-    // Pendientes
-    const pendList = document.getElementById('pending-list');
-    const pendItems = pendientes.filter(p=>!p.validado);
-    if (pendItems.length === 0) {
-      pendList.innerHTML = '<p style="font-size:13px;color:rgba(245,237,214,0.35);">No hay votos pendientes de validación.</p>';
-    } else {
-      pendList.innerHTML = pendItems.map(p => `
-        <div class="pending-item" id="pend-${p.id}">
-          <div class="pi-top">
-            <div class="pi-obra">${p.obra}</div>
-            <div class="pi-badge">Pendiente</div>
-          </div>
-          <div class="pi-meta">
-            <span>Ficha: ${p.ficha}</span>
-            <span>Cédula: ${p.cedula}</span>
-          </div>
-          ${p.desc ? `<div style="font-size:12px;color:rgba(245,237,214,0.5);margin-bottom:8px;font-style:italic;">"${p.desc}"</div>` : ''}
-          <div class="pi-actions">
-            <button class="btn-xs approve" onclick="validarVoto(${p.id}, true)">✓ Validar</button>
-            <button class="btn-xs reject" onclick="validarVoto(${p.id}, false)">✗ Rechazar</button>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-
-  function validarVoto(id, aprobar) {
-    const p = pendientes.find(x=>x.id===id);
-    if (!p) return;
-    p.validado = true;
-    if (aprobar) {
-      votosValidados[p.obraId] = (votosValidados[p.obraId]||0) + 1;
-    } else {
-      votos[p.obraId] = Math.max(0, (votos[p.obraId]||0) - 1);
-    }
-    renderAdmin();
   }
 
   buildGrid();
