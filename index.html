@@ -87,96 +87,85 @@
       0%,100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(1.3); }
     }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-      width: 100%;
-    }
-    nav button {
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.9rem 2rem;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      flex: 1;
-    }
-    nav button.active {
+    .admin-toggle-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid var(--border);
       color: var(--gold);
-      border-bottom-color: var(--gold);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
     }
-    nav button:hover:not(.active) { color: var(--text); }
+    .admin-toggle-btn:hover {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 15px rgba(201, 168, 76, 0.3);
+      transform: scale(1.05);
+    }
+    .collapsible-header {
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    .collapsible-header:hover {
+      border-color: var(--gold-dim);
+    }
+    .collapsible-content {
+      max-height: 1200px;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease;
+      opacity: 1;
+    }
+    .collapsible-content.collapsed {
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+      margin-bottom: 0;
+    }
     section { display: none; padding: 2rem 1rem 4rem; max-width: 700px; margin: 0 auto; }
     section.active { display: block; }
-    .obras-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-    }
-    .obras-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-bottom: 1.8rem;
-    }
-    .obra-card {
+    .form-card {
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      padding: 1.8rem 1.5rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a7a62' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(.4,0,.2,1);
-      position: relative;
-      overflow: hidden;
     }
-    .obra-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s;
+    select:focus {
+      border-color: var(--gold-dim);
+      box-shadow: 0 0 12px rgba(201,168,76,0.1);
     }
-    .obra-card:hover::before { opacity: 1; }
-    .obra-card:hover { border-color: var(--gold-dim); background: #1f1a10; transform: translateY(-2px); }
-    .obra-card.selected {
-      border-color: var(--gold);
-      background: #1f1a10;
-      box-shadow: 0 0 20px rgba(201,168,76,0.15);
-    }
-    .obra-card.selected::after {
-      content: '✦';
-      position: absolute;
-      top: 0.5rem; right: 0.6rem;
-      color: var(--gold);
-      font-size: 0.75rem;
-      animation: fadeInStar 0.3s ease;
-    }
-    @keyframes fadeInStar {
-      from { opacity: 0; transform: scale(0) rotate(-180deg); }
-      to { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-    .obra-num {
-      font-size: 0.65rem;
-      color: var(--gold-dim);
-      letter-spacing: 0.1em;
-      margin-bottom: 0.2rem;
-    }
-    .obra-nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.85rem;
-      line-height: 1.3;
+    select option {
+      background: var(--bg2);
       color: var(--text);
+      padding: 0.5rem;
     }
     .form-group { margin-bottom: 1.2rem; }
     label {
@@ -207,10 +196,10 @@
     input::placeholder, textarea::placeholder { color: var(--text-dim); }
     .btn-votar {
       width: 100%;
-      background: var(--gold);
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
       color: #000;
       border: none;
-      border-radius: 3px;
+      border-radius: 8px;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.85rem;
       font-weight: 600;
@@ -218,7 +207,7 @@
       text-transform: uppercase;
       padding: 1rem;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.3s;
+      transition: transform 0.1s, box-shadow 0.3s, filter 0.2s;
       margin-top: 0.5rem;
       position: relative;
       overflow: hidden;
@@ -234,9 +223,9 @@
       transition: width 0.5s, height 0.5s;
     }
     .btn-votar:active::after { width: 300px; height: 300px; }
-    .btn-votar:hover { background: var(--gold-light); box-shadow: 0 4px 20px rgba(201,168,76,0.3); }
+    .btn-votar:hover { filter: brightness(1.1); box-shadow: 0 4px 24px rgba(201,168,76,0.35); }
     .btn-votar:active { transform: scale(0.99); }
-    .btn-votar:disabled { background: var(--gold-dim); cursor: not-allowed; box-shadow: none; }
+    .btn-votar:disabled { background: var(--gold-dim); cursor: not-allowed; box-shadow: none; filter: none; }
     .mensaje {
       display: none;
       border-radius: 4px;
@@ -402,6 +391,7 @@
       border-top: 1px solid var(--border);
       margin: 1.5rem 0;
     }
+
     /* ── COUNTDOWN ── */
     .countdown-wrap {
       display: none;
@@ -456,6 +446,7 @@
     @keyframes blink {
       50% { opacity: 0; }
     }
+
     /* ── CHART ── */
     .chart-container {
       display: flex;
@@ -511,6 +502,7 @@
     }
     .legend-name { flex: 1; color: var(--text); }
     .legend-pct { color: var(--gold); font-weight: 500; }
+
     /* ── REALTIME INDICATOR ── */
     .realtime-badge {
       display: inline-flex;
@@ -528,6 +520,7 @@
       background: var(--gold);
       animation: pulse 1.5s infinite;
     }
+
     /* ── TOAST NOTIFICATION ── */
     .toast-container {
       position: fixed;
@@ -560,6 +553,7 @@
       from { opacity: 1; transform: translateX(0); }
       to { opacity: 0; transform: translateX(40px); }
     }
+
     /* ── ADMIN ACTIONS ROW ── */
     .admin-actions {
       display: flex;
@@ -601,6 +595,7 @@
       transition: all 0.2s;
     }
     .btn-export:hover { background: var(--gold); color: #000; }
+
     /* ── MODAL ── */
     .modal-overlay {
       display: none;
@@ -669,6 +664,7 @@
     }
     .modal-confirm:hover { background: #d55; }
     .modal-confirm:disabled { background: var(--gold-dim); cursor: not-allowed; }
+
     /* ── PARTICLES BG ── */
     .particles-canvas {
       position: fixed;
@@ -677,6 +673,7 @@
       z-index: -1;
       pointer-events: none;
     }
+
     /* ── CONFETTI ── */
     .confetti-piece {
       position: fixed;
@@ -688,6 +685,7 @@
       0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
       100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
     }
+
     footer {
       text-align: center;
       padding: 2rem 1rem;
@@ -712,6 +710,7 @@
       margin-right: 0.4rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
     /* ── COUNTDOWN ADMIN ── */
     .countdown-admin-section {
       background: var(--bg3);
@@ -760,17 +759,29 @@
       transition: all 0.2s;
     }
     .btn-clear-countdown:hover { border-color: var(--text-dim); color: var(--text); }
+
     @media (max-width: 480px) {
-      .obras-grid { grid-template-columns: 1fr; }
-      .stat-cards { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .stat-card {
+        padding: 0.6rem 0.3rem;
+      }
+      .stat-num {
+        font-size: 1.3rem;
+      }
+      .stat-label {
+        font-size: 0.52rem;
+        letter-spacing: 0.05em;
+      }
       .admin-actions { flex-direction: column; }
       .chart-legend { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
 <canvas class="particles-canvas" id="particlesCanvas"></canvas>
 <div class="toast-container" id="toastContainer"></div>
+
 <!-- ── RESET MODAL ── -->
 <div class="modal-overlay" id="resetModal">
   <div class="modal-box">
@@ -787,7 +798,9 @@
     </div>
   </div>
 </div>
+
 <header>
+  <button class="admin-toggle-btn" id="adminToggleBtn" onclick="toggleAdminView()" title="Administrador">🔑</button>
   <div class="header-badge">SENA CTPGA - 2026</div>
   <h1>Galería <span>Expresando Arte</span></h1>
   <p class="subtitle">Concurso de Arte Afrocolombiano</p>
@@ -820,10 +833,7 @@
     </div>
   </div>
 </header>
-<nav>
-  <button class="active" onclick="showTab('votar', this)">✦ Votar</button>
-  <button onclick="showTab('admin', this)">Administrador</button>
-</nav>
+
 <!-- ══════════════ SECCIÓN VOTAR ══════════════ -->
 <section id="tab-votar" class="active">
   <div class="pantalla-especial" id="pantallaCerrada">
@@ -837,28 +847,40 @@
     <p>Tu voto ha sido registrado exitosamente. Gracias por participar de este Evento.</p>
   </div>
   <div id="formularioVotar">
-    <p class="obras-label">Selecciona la obra que mas te guste</p>
-    <div class="obras-grid" id="obrasGrid"></div>
-    <hr class="divider"/>
-    <div class="form-group">
-      <label>Número de documento</label>
-      <input type="text" id="cedula" placeholder="Ej: 1038106287" inputmode="numeric"/>
+    <div class="form-card">
+      <div class="form-group">
+        <label>🎨 Obra de arte</label>
+        <select id="obraSelect" onchange="obraSeleccionada = this.value || null">
+          <option value="">— Selecciona una obra —</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>📋 Número de ficha</label>
+          <input type="text" id="ficha" placeholder="Ej: 2687453" inputmode="numeric"/>
+        </div>
+        <div class="form-group">
+          <label>🪪 Número de cédula</label>
+          <input type="text" id="cedula" placeholder="Ej: 1005678432" inputmode="numeric"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>💬 ¿Por qué esta obra? <span style="color:var(--text-dim);font-size:0.75rem;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <textarea id="descripcion" placeholder="Escribe brevemente qué te inspiró a elegir esta obra..."></textarea>
+      </div>
+
+      <div class="mensaje error" id="msgCampos">Por favor completa todos los campos requeridos y selecciona una obra.</div>
+      <div class="mensaje error" id="msgNoHabilitado">⚠️ Lastimosamente tu número de documento no está en la lista de aprendices habilitados para votar.</div>
+      <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, tú voto ya esta en la base de datos.</div>
+      <div class="mensaje success-msg" id="msgExito">✦ ¡Tu voto ha sido registrado exitosamente!</div>
+
+      <button class="btn-votar" id="btnVotar" onclick="emitirVoto()">✦ Emitir mi voto</button>
     </div>
-    <div class="form-group">
-      <label>Número de ficha</label>
-      <input type="text" id="ficha" placeholder="Ej: 3188913" inputmode="numeric"/>
-    </div>
-    <div class="form-group">
-      <label>¿Por qué votas por esta obra? <span style="color:var(--text-dim);font-size:0.75rem;text-transform:none;letter-spacing:0">(opcional)</span></label>
-      <textarea id="descripcion" placeholder="Comparte tu opinión sobre la obra..."></textarea>
-    </div>
-    <div class="mensaje error" id="msgCampos">Por favor completa todos los campos requeridos y selecciona una obra.</div>
-    <div class="mensaje error" id="msgNoHabilitado">⚠️ Lastimosamente tu número de documento no está en la lista de aprendices habilitados para votar.</div>
-    <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, tú voto ya esta en la base de datos.</div>
-    <div class="mensaje success-msg" id="msgExito">✦ ¡Tu voto ha sido registrado exitosamente!</div>
-    <button class="btn-votar" id="btnVotar" onclick="emitirVoto()">✦ Emitir mi voto</button>
   </div>
 </section>
+
 <!-- ══════════════ SECCIÓN ADMIN ══════════════ -->
 <section id="tab-admin">
   <div class="admin-login" id="adminLogin">
@@ -889,6 +911,7 @@
         <div class="stat-label">Obra líder</div>
       </div>
     </div>
+
     <!-- CHART -->
     <p class="resultados-label">Distribución de votos</p>
     <div class="chart-container">
@@ -899,8 +922,15 @@
       </div>
     </div>
     <div class="chart-legend" id="chartLegend"></div>
-    <p class="resultados-label" style="margin-top:2rem;">Ranking de obras</p>
-    <div id="resultadosAdmin"></div>
+
+    <div class="collapsible-header" onclick="toggleRankingCollapse()">
+      <p class="resultados-label" style="margin:0; display:flex; justify-content:space-between; align-items:center;">
+        <span>Ranking de obras</span>
+        <span id="rankingCollapseIcon" style="font-size:0.75rem; color:var(--gold-dim);">▲</span>
+      </p>
+    </div>
+    <div id="resultadosAdmin" class="collapsible-content"></div>
+
     <!-- COUNTDOWN ADMIN SECTION -->
     <div class="countdown-admin-section">
       <label>⏱ Contador regresivo de cierre</label>
@@ -910,6 +940,7 @@
       <button class="btn-set-countdown" onclick="setCountdown()">Aplicar</button>
       <button class="btn-clear-countdown" onclick="clearCountdown()">Quitar</button>
     </div>
+
     <!-- ADMIN ACTIONS -->
     <div class="admin-actions">
       <button class="btn-cerrar cerrar" id="btnEstado" onclick="toggleVotacion()">🔒 Cerrar votaciones</button>
@@ -919,54 +950,62 @@
     <button class="btn-logout" onclick="logoutAdmin()">Cerrar sesión</button>
   </div>
 </section>
+
 <footer>
   <p><span>Evento organizado por Bienestar al Aprendiz</span></p>
   <p>SENA · Galería Expresando Arte · Concurso de Arte 2026</p>
   <p><span>© 2026 Carlos Andres Jimenez Murillo. Todos los derechos reservados.</span></p>
 </footer>
+
 <script>
   // ── SUPABASE ──
   const SUPABASE_URL = 'https://kugbnlgzyoxuzsqoccnc.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1Z2JubGd6eW94dXpzcW9jY25jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMjY3MDQsImV4cCI6MjA5NDkwMjcwNH0.H3YU6HhauOpX-jQ7HBxLcfC14YrTI5J3AV-Mq5vxtDc';
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
   // ── OBRAS ──
   const OBRAS = [
-    'Carta de afrocolombianidad',
-    'La Tierra Habita en Ella',
-    'Reunión familiar',
-    'El Latido de la Tierra y el Río',
-    'Tejido de una Historia',
-    'Color de la resistencia',
-    'Herencia viva',
-    'La sombra de Eva',
-    'El amor de colombia',
-    'Orgullo Afrocolombiano',
-    'Todos somos un color'
+    { nombre: 'Carta de afrocolombianidad', autor: 'Ana Sofía Ascencio Vizcaya' },
+    { nombre: 'La Tierra Habita en Ella', autor: 'Nathaly García Caldera' },
+    { nombre: 'Reunión familiar', autor: 'José Daniel Camacho Lopez' },
+    { nombre: 'El Latido de la Tierra y el Río', autor: 'Oskar Daniel Rangel Gutiérrez' },
+    { nombre: 'Tejido de una Historia', autor: 'Paulina Llorente Moreno' },
+    { nombre: 'Color de la resistencia', autor: 'Luisa Fernanda Cerpa Márquez' },
+    { nombre: 'Herencia viva', autor: 'Estefany Perez Martinez' },
+    { nombre: 'La sombra de Eva', autor: 'Luis José Acosta' },
+    { nombre: 'El amor de colombia', autor: 'Kevin David Henao hoyos' },
+    { nombre: 'Orgullo Afrocolombiano', autor: 'Brandon Polo Vanegas' },
+    { nombre: 'Todos somos un color', autor: 'Daniela Padilla Polanco' }
   ];
+
   // Chart color palette — rich, harmonious
   const CHART_COLORS = [
     '#c9a84c', '#e8c97a', '#7a5f2a', '#d4a257', '#b8860b',
     '#daa520', '#f0c674', '#c4943a', '#a67c28', '#8b6914',
     '#e6be73'
   ];
+
   let obraSeleccionada = null;
   let votacionAbierta = true;
   let countdownTarget = null;
   let countdownInterval = null;
   let realtimeChannel = null;
+
   // ── PARTICLES BACKGROUND ──
   function initParticles() {
     const canvas = document.getElementById('particlesCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
     const PARTICLE_COUNT = 40;
+
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resize();
     window.addEventListener('resize', resize);
+
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -977,6 +1016,7 @@
         alpha: Math.random() * 0.3 + 0.05
       });
     }
+
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
@@ -995,6 +1035,7 @@
     }
     draw();
   }
+
   // ── TOAST NOTIFICATIONS ──
   function showToast(message, icon = '✦') {
     const container = document.getElementById('toastContainer');
@@ -1004,6 +1045,7 @@
     container.appendChild(toast);
     setTimeout(() => { toast.remove(); }, 3000);
   }
+
   // ── CONFETTI ──
   function launchConfetti() {
     const colors = ['#c9a84c', '#e8c97a', '#ffd700', '#f0c674', '#daa520', '#fff'];
@@ -1023,21 +1065,25 @@
       setTimeout(() => piece.remove(), 4000);
     }
   }
+
   // ── INIT ──
   async function init() {
     initParticles();
     renderObras();
     await checkEstadoVotacion();
     await loadCountdownTarget();
+
     const { data } = await db.auth.getSession();
     if (data.session) {
       document.getElementById('adminLogin').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'block';
       cargarResultados();
     }
+
     // Subscribe to Supabase Realtime
     setupRealtime();
   }
+
   // ── REALTIME ──
   function setupRealtime() {
     realtimeChannel = db
@@ -1064,33 +1110,30 @@
       })
       .subscribe();
   }
+
   // ── RENDER OBRAS ──
   function renderObras() {
-    const grid = document.getElementById('obrasGrid');
-    grid.innerHTML = OBRAS.map((nombre, i) => `
-      <div class="obra-card" id="obra-${i}" onclick="seleccionarObra(${i}, '${nombre.replace(/'/g,"\\'")}')">
-        <div class="obra-num">Obra ${String(i+1).padStart(2,'0')}</div>
-        <div class="obra-nombre">${nombre}</div>
-      </div>
+    const select = document.getElementById('obraSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="">— Selecciona una obra —</option>' + OBRAS.map((o, i) => `
+      <option value="${o.nombre.replace(/"/g, '&quot;')}">Obra ${String(i+1).padStart(2,'0')}: "${o.nombre}" — ${o.autor}</option>
     `).join('');
   }
-  function seleccionarObra(idx, nombre) {
-    document.querySelectorAll('.obra-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('obra-'+idx).classList.add('selected');
-    obraSeleccionada = nombre;
-  }
+
   // ── ESTADO VOTACION ──
   async function checkEstadoVotacion() {
     const { data } = await db.from('configuracion').select('valor').eq('clave','votacion_abierta').maybeSingle();
     votacionAbierta = data?.valor === 'true';
     actualizarUIEstado();
   }
+
   function actualizarUIEstado() {
     const badge = document.getElementById('statusBadge');
     const texto = document.getElementById('statusText');
     const cerrada = document.getElementById('pantallaCerrada');
     const formulario = document.getElementById('formularioVotar');
     const yaVoto = document.getElementById('pantallaYaVoto');
+
     if (!votacionAbierta) {
       cerrada.classList.add('show');
       formulario.style.display = 'none';
@@ -1108,6 +1151,7 @@
       texto.textContent = 'Votaciones abiertas';
     }
   }
+
   // ── COUNTDOWN ──
   async function loadCountdownTarget() {
     const { data } = await db.from('configuracion').select('valor').eq('clave','countdown_target').maybeSingle();
@@ -1116,20 +1160,25 @@
       startCountdown();
     }
   }
+
   function startCountdown() {
     if (countdownInterval) clearInterval(countdownInterval);
     const wrap = document.getElementById('countdownWrap');
+
     if (!countdownTarget || isNaN(countdownTarget.getTime())) {
       wrap.classList.remove('show');
       return;
     }
+
     wrap.classList.add('show');
     updateCountdownDisplay();
     countdownInterval = setInterval(updateCountdownDisplay, 1000);
   }
+
   function updateCountdownDisplay() {
     const now = new Date();
     const diff = countdownTarget - now;
+
     if (diff <= 0) {
       document.getElementById('cdDays').textContent = '00';
       document.getElementById('cdHours').textContent = '00';
@@ -1142,21 +1191,25 @@
       }
       return;
     }
+
     const days = Math.floor(diff / (1000*60*60*24));
     const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
     const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
     const secs = Math.floor((diff % (1000*60)) / 1000);
+
     document.getElementById('cdDays').textContent = String(days).padStart(2,'0');
     document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
     document.getElementById('cdMins').textContent = String(mins).padStart(2,'0');
     document.getElementById('cdSecs').textContent = String(secs).padStart(2,'0');
   }
+
   async function toggleVotacionAutoClose() {
     await db.from('configuracion').update({ valor: 'false' }).eq('clave','votacion_abierta');
     votacionAbierta = false;
     actualizarUIEstado();
     showToast('¡Las votaciones se han cerrado automáticamente!', '⏱');
   }
+
   async function setCountdown() {
     const input = document.getElementById('countdownInput');
     if (!input.value) return;
@@ -1171,6 +1224,7 @@
     startCountdown();
     showToast('Contador regresivo configurado', '⏱');
   }
+
   async function clearCountdown() {
     countdownTarget = null;
     if (countdownInterval) clearInterval(countdownInterval);
@@ -1179,50 +1233,60 @@
     await db.from('configuracion').update({ valor: '' }).eq('clave','countdown_target');
     showToast('Contador regresivo eliminado', '🗑');
   }
+
   // ── VOTAR ──
   async function emitirVoto() {
     if (!votacionAbierta) return;
     ocultarMensajes();
+
     const cedula = document.getElementById('cedula').value.trim();
     const ficha  = document.getElementById('ficha').value.trim();
     const desc   = document.getElementById('descripcion').value.trim();
+
     if (!/^\d+$/.test(cedula) || !/^\d+$/.test(ficha)) {
       document.getElementById('msgCampos').textContent = 'La cédula y la ficha solo deben contener números';
       document.getElementById('msgCampos').classList.add('show');
       return;
     }
+
     if (!obraSeleccionada || !cedula || !ficha) {
       document.getElementById('msgCampos').textContent = 'Por favor completa todos los campos requeridos y selecciona una obra.';
       document.getElementById('msgCampos').classList.add('show');
       return;
     }
+
     const btn = document.getElementById('btnVotar');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Registrando...';
+
     // 1. Verify document is enabled
     const { data: aprendiz } = await db
       .from('aprendices')
       .select('numero_documento')
       .eq('numero_documento', cedula)
       .maybeSingle();
+
     if (!aprendiz) {
       document.getElementById('msgNoHabilitado').classList.add('show');
       btn.disabled = false;
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
+
     // 2. Check if already voted
     const { data: votoExistente } = await db
       .from('votos')
       .select('id')
       .eq('numero_documento', cedula)
       .maybeSingle();
+
     if (votoExistente) {
       document.getElementById('msgYaVoto').classList.add('show');
       btn.disabled = false;
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
+
     // 3. Register vote
     const { error: errVoto } = await db.from('votos').insert({
       numero_documento: cedula,
@@ -1230,6 +1294,7 @@
       ficha: ficha,
       descripcion: desc || null
     });
+
     if (errVoto) {
       if (errVoto.code === '23505') {
         document.getElementById('msgYaVoto').classList.add('show');
@@ -1241,6 +1306,7 @@
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
+
     // Success!
     launchConfetti();
     document.getElementById('formularioVotar').style.display = 'none';
@@ -1249,11 +1315,14 @@
     document.getElementById('cedula').value = '';
     document.getElementById('ficha').value = '';
     document.getElementById('descripcion').value = '';
-    document.querySelectorAll('.obra-card').forEach(c => c.classList.remove('selected'));
+    const select = document.getElementById('obraSelect');
+    if (select) select.value = '';
   }
+
   function ocultarMensajes() {
     document.querySelectorAll('.mensaje').forEach(m => m.classList.remove('show'));
   }
+
   // ── ADMIN LOGIN ──
   async function loginAdmin() {
     ocultarMensajes();
@@ -1274,42 +1343,58 @@
     document.getElementById('adminPanel').style.display = 'block';
     cargarResultados();
   }
+
   async function logoutAdmin() {
     await db.auth.signOut();
     document.getElementById('adminLogin').style.display = 'block';
     document.getElementById('adminPanel').style.display = 'none';
     document.getElementById('adminPass').value = '';
+    if (currentView === 'admin') {
+      toggleAdminView();
+    }
   }
+
   // ── LOAD RESULTS ──
   async function cargarResultados() {
     const { data: { session } } = await db.auth.getSession();
     if (!session) return;
+
     const { data: votos } = await db.from('votos').select('obra');
     await checkEstadoVotacion();
+
     const conteo = {};
-    OBRAS.forEach(o => conteo[o] = 0);
+    OBRAS.forEach(o => conteo[o.nombre] = 0);
     (votos || []).forEach(v => { if (conteo[v.obra] !== undefined) conteo[v.obra]++; });
+
     const total = votos?.length || 0;
     document.getElementById('totalVotos').textContent = total;
+
     const sorted = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
-    document.getElementById('obraLider').textContent = sorted[0][1] > 0 ? (OBRAS.indexOf(sorted[0][0])+1) : '—';
+    document.getElementById('obraLider').textContent = sorted[0][1] > 0 ? (OBRAS.findIndex(o => o.nombre === sorted[0][0])+1) : '—';
+
     const medals = ['🥇','🥈','🥉'];
     const topClasses = ['top1','top2','top3'];
     const maxVotos = sorted[0][1] || 1;
-    document.getElementById('resultadosAdmin').innerHTML = sorted.map(([obra, votos], i) => `
-      <div class="resultado-item ${topClasses[i]||''}">
-        <div class="medal">${medals[i]||''}</div>
-        <div class="resultado-info">
-          <div class="resultado-nombre">${obra}</div>
-          <div class="resultado-barra-wrap">
-            <div class="resultado-barra" style="width:${(votos/maxVotos*100)||0}%"></div>
+
+    document.getElementById('resultadosAdmin').innerHTML = sorted.map(([obra, votos], i) => {
+      const autor = OBRAS.find(o => o.nombre === obra)?.autor || '';
+      return `
+        <div class="resultado-item ${topClasses[i]||''}">
+          <div class="medal">${medals[i]||''}</div>
+          <div class="resultado-info">
+            <div class="resultado-nombre">${obra} <span style="font-size:0.75rem;color:var(--text-dim);">— ${autor}</span></div>
+            <div class="resultado-barra-wrap">
+              <div class="resultado-barra" style="width:${(votos/maxVotos*100)||0}%"></div>
+            </div>
           </div>
+          <div class="resultado-votos">${votos}</div>
         </div>
-        <div class="resultado-votos">${votos}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+
     // Update chart
     drawDonutChart(conteo, total);
+
     // Status button
     const btn = document.getElementById('btnEstado');
     if (votacionAbierta) {
@@ -1320,24 +1405,31 @@
       btn.className = 'btn-cerrar abrir';
     }
   }
+
   // ── DONUT CHART ──
   function drawDonutChart(conteo, total) {
     const canvas = document.getElementById('chartCanvas');
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const displaySize = 260;
+
     canvas.width = displaySize * dpr;
     canvas.height = displaySize * dpr;
     canvas.style.width = displaySize + 'px';
     canvas.style.height = displaySize + 'px';
     ctx.scale(dpr, dpr);
+
     const cx = displaySize / 2;
     const cy = displaySize / 2;
     const radius = 110;
     const innerRadius = 68;
+
     ctx.clearRect(0, 0, displaySize, displaySize);
+
     document.getElementById('chartCenterNum').textContent = total;
+
     const entries = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+
     if (total === 0) {
       // Empty state — draw a gray ring
       ctx.beginPath();
@@ -1345,35 +1437,43 @@
       ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2, true);
       ctx.fillStyle = '#1a1a1a';
       ctx.fill();
+
       document.getElementById('chartLegend').innerHTML = '';
       return;
     }
+
     let startAngle = -Math.PI / 2;
     const gap = 0.02; // gap between slices
+
     entries.forEach(([obra, votos], i) => {
       if (votos === 0) return;
       const sliceAngle = (votos / total) * Math.PI * 2 - gap;
       if (sliceAngle <= 0) return;
+
       ctx.beginPath();
       ctx.arc(cx, cy, radius, startAngle + gap/2, startAngle + sliceAngle + gap/2);
       ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle + gap/2, startAngle + gap/2, true);
       ctx.closePath();
       ctx.fillStyle = CHART_COLORS[i % CHART_COLORS.length];
       ctx.fill();
+
       // Subtle shadow
       ctx.shadowColor = 'rgba(0,0,0,0.3)';
       ctx.shadowBlur = 4;
       ctx.fill();
       ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
+
       startAngle += (votos / total) * Math.PI * 2;
     });
+
     // Legend
     const legendEl = document.getElementById('chartLegend');
     legendEl.innerHTML = entries.map(([obra, votos], i) => {
       const pct = total > 0 ? ((votos/total)*100).toFixed(1) : '0.0';
+      const autor = OBRAS.find(o => o.nombre === obra)?.autor || '';
       return `
-        <div class="legend-item">
+        <div class="legend-item" title="${autor}">
           <span class="legend-dot" style="background:${CHART_COLORS[i % CHART_COLORS.length]}"></span>
           <span class="legend-name">${obra}</span>
           <span class="legend-pct">${pct}%</span>
@@ -1381,6 +1481,7 @@
       `;
     }).join('');
   }
+
   // ── TOGGLE VOTACION ──
   async function toggleVotacion() {
     const nuevoEstado = votacionAbierta ? 'false' : 'true';
@@ -1389,18 +1490,22 @@
     actualizarUIEstado();
     await cargarResultados();
   }
+
   // ── EXPORT TO EXCEL ──
   async function exportarExcel() {
     const { data: { session } } = await db.auth.getSession();
     if (!session) return;
+
     const { data: votos } = await db
       .from('votos')
       .select('*')
       .order('created_at', { ascending: true });
+
     if (!votos || votos.length === 0) {
       showToast('No hay votos para exportar', '⚠️');
       return;
     }
+
     // Build CSV content (Excel-compatible with BOM)
     const BOM = '\uFEFF';
     const headers = ['ID', 'Número de Documento', 'Obra', 'Ficha', 'Descripción', 'Fecha'];
@@ -1412,6 +1517,7 @@
       `"${(v.descripcion || '').replace(/"/g, '""')}"`,
       new Date(v.created_at).toLocaleString('es-CO')
     ]);
+
     const csv = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1422,43 +1528,53 @@
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
     showToast('Archivo exportado exitosamente', '📊');
   }
+
   // ── RESET VOTACIONES ──
   function abrirModalReset() {
     document.getElementById('resetModal').classList.add('show');
     document.getElementById('resetPassword').value = '';
     document.getElementById('msgResetError').classList.remove('show');
   }
+
   function cerrarModalReset() {
     document.getElementById('resetModal').classList.remove('show');
     document.getElementById('resetPassword').value = '';
     document.getElementById('msgResetError').classList.remove('show');
   }
+
   async function confirmarReset() {
     const password = document.getElementById('resetPassword').value.trim();
     if (!password) {
       document.getElementById('msgResetError').classList.add('show');
       return;
     }
+
     const btn = document.getElementById('btnConfirmReset');
     btn.disabled = true;
     btn.textContent = 'Verificando...';
+
     // Re-authenticate to verify password
     // Sign out and sign back in to validate the password
     const { error } = await db.auth.signInWithPassword({
       email: 'andres@sena.com',
       password: password
     });
+
     if (error) {
       document.getElementById('msgResetError').classList.add('show');
       btn.disabled = false;
       btn.textContent = 'Reiniciar todo';
       return;
     }
+
     // Password verified — delete all votes
     btn.textContent = 'Eliminando votos...';
+
     const { error: deleteError } = await db.from('votos').delete().neq('id', 0);
+
     if (deleteError) {
       showToast('Error al eliminar votos: ' + deleteError.message, '❌');
       btn.disabled = false;
@@ -1466,20 +1582,47 @@
       cerrarModalReset();
       return;
     }
+
     showToast('Todas las votaciones han sido reiniciadas', '🗑');
     cerrarModalReset();
     btn.disabled = false;
     btn.textContent = 'Reiniciar todo';
     await cargarResultados();
   }
-  // ── TABS ──
-  function showTab(tab, btn) {
-    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-'+tab).classList.add('active');
-    btn.classList.add('active');
-    if (tab === 'admin') cargarResultados();
+
+  // ── VIEW TOGGLE & COLLAPSE ──
+  let currentView = 'votar';
+
+  function toggleAdminView() {
+    const btn = document.getElementById('adminToggleBtn');
+    if (currentView === 'votar') {
+      currentView = 'admin';
+      document.getElementById('tab-votar').classList.remove('active');
+      document.getElementById('tab-admin').classList.add('active');
+      btn.textContent = '✕';
+      btn.title = 'Volver a Votar';
+      cargarResultados();
+    } else {
+      currentView = 'votar';
+      document.getElementById('tab-votar').classList.add('active');
+      document.getElementById('tab-admin').classList.remove('active');
+      btn.textContent = '🔑';
+      btn.title = 'Administrador';
+    }
   }
+
+  function toggleRankingCollapse() {
+    const content = document.getElementById('resultadosAdmin');
+    const icon = document.getElementById('rankingCollapseIcon');
+    if (content.classList.contains('collapsed')) {
+      content.classList.remove('collapsed');
+      icon.textContent = '▲';
+    } else {
+      content.classList.add('collapsed');
+      icon.textContent = '▼';
+    }
+  }
+
   init();
 </script>
 </body>
