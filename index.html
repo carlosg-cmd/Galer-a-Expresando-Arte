@@ -1499,7 +1499,7 @@
     const { data: votos } = await db
       .from('votos')
       .select('*')
-      .order('created_at', { ascending: true });
+      .order('fecha', { ascending: true });
 
     if (!votos || votos.length === 0) {
       showToast('No hay votos para exportar', '⚠️');
@@ -1515,7 +1515,7 @@
       `"${(v.obra || '').replace(/"/g, '""')}"`,
       v.ficha,
       `"${(v.descripcion || '').replace(/"/g, '""')}"`,
-      new Date(v.created_at).toLocaleString('es-CO')
+      new Date(v.fecha).toLocaleString('es-CO')
     ]);
 
     const csv = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
