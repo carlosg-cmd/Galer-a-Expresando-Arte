@@ -1084,31 +1084,30 @@
     setupRealtime();
   }
 
-  // ── REALTIME ──
+
+  // ── POLLING AUTOMÁTICO ──
+  let lastTotalVotos = -1;
+  let lastEstadoVotacion = null;
+
   function setupRealtime() {
-    realtimeChannel = db
-      .channel('votos-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'votos' }, (payload) => {
-        // When a new vote is inserted, deleted, or updated
-        if (payload.eventType === 'INSERT') {
-          showToast(`Nuevo voto registrado para: ${payload.new.obra}`, '🗳');
-        }
-        // Refresh admin panel if visible
-        const adminPanel = document.getElementById('adminPanel');
-        if (adminPanel && adminPanel.style.display !== 'none') {
-          cargarResultados();
-        }
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, (payload) => {
-        // When voting state changes
+    setInterval(async () => {
+      const { data: configData } = await db.from("configuracion").select("valor").eq("clave", "votacion_abierta").maybeSingle();
+      const nuevoEstado = configData?.valor;
+      if (lastEstadoVotacion !== null && nuevoEstado !== lastEstadoVotacion) {
         checkEstadoVotacion();
-        if (payload.new?.valor === 'false') {
-          showToast('Las votaciones han sido cerradas', '🔒');
-        } else if (payload.new?.valor === 'true') {
-          showToast('Las votaciones están abiertas', '🔓');
-        }
-      })
-      .subscribe();
+        if (nuevoEstado === "false") showToast("Las votaciones han sido cerradas", "🔒");
+        else if (nuevoEstado === "true") showToast("Las votaciones están abiertas", "🔓");
+      }
+      lastEstadoVotacion = nuevoEstado;
+      const { count } = await db.from("votos").select("*", { count: "exact", head: true });
+      if (lastTotalVotos !== -1 && count > lastTotalVotos) {
+        const diff = count - lastTotalVotos;
+        showToast(diff + " nuevo" + (diff > 1 ? "s" : "") + " voto" + (diff > 1 ? "s" : "") + " registrado" + (diff > 1 ? "s" : ""), "🗳");
+        const adminPanel = document.getElementById("adminPanel");
+        if (adminPanel && adminPanel.style.display !== "none") cargarResultados();
+      }
+      lastTotalVotos = count ?? 0;
+    }, 5000);
   }
 
   // ── RENDER OBRAS ──
