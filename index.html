@@ -747,7 +747,15 @@
   }
 
   async function cargarResultados() {
-    const { data: votos } = await db.from('votos').select('obra');
+    const {
+  data: { session }
+} = await db.auth.getSession();
+
+if (!session) return;
+
+const { data: votos } = await db
+  .from('votos')
+  .select('obra');
     await checkEstadoVotacion();
 
     const conteo = {};
