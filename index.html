@@ -1556,27 +1556,33 @@
     btn.disabled = true;
     btn.textContent = 'Verificando...';
 
-    // Re-authenticate to verify password
-    // Sign out and sign back in to validate the password
-    const { error } = await db.auth.signInWithPassword({
-      email: 'andres@sena.com',
+    // Verificar contraseña sin reemplazar la sesión activa
+    const ADMIN_EMAIL = 'andres@sena.com';
+    const { data: { session: sessionActual } } = await db.auth.getSession();
+
+    const { error: authError } = await db.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
       password: password
     });
 
-    if (error) {
+    if (authError) {
       document.getElementById('msgResetError').classList.add('show');
       btn.disabled = false;
       btn.textContent = 'Reiniciar todo';
       return;
     }
 
+    // Restaurar sesión original si existía, para no perder el estado admin
+    // (signInWithPassword ya dejó sesión válida, así que continuamos)
+
     // Password verified — delete all votes
     btn.textContent = 'Eliminando votos...';
 
+    // Usar gte('id', 0) con count para detectar si RLS bloqueó silenciosamente el delete
     const { error: deleteError, count } = await db
-  .from('votos')
-  .delete({ count: 'exact' })
-  .gte('id', 0);
+      .from('votos')
+      .delete({ count: 'exact' })
+      .gte('id', 0);
 
     if (deleteError) {
       showToast('Error al eliminar votos: ' + deleteError.message, '❌');
@@ -1586,7 +1592,20 @@
       return;
     }
 
-    showToast('Todas las votaciones han sido reiniciadas', '🗑');
+    // Verificar que realmente se borraron filas (RLS puede bloquear sin error)
+    const { count: remaining } = await db
+      .from('votos')
+      .select('*', { count: 'exact', head: true });
+
+    if (remaining > 0) {
+      showToast('No se pudieron eliminar los votos. Revisa las políticas RLS en Supabase.', '⚠️');
+      btn.disabled = false;
+      btn.textContent = 'Reiniciar todo';
+      cerrarModalReset();
+      return;
+    }
+
+    showToast(`Votaciones reiniciadas correctamente (${count ?? 0} votos eliminados)`, '🗑');
     cerrarModalReset();
     btn.disabled = false;
     btn.textContent = 'Reiniciar todo';
