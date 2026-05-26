@@ -1573,7 +1573,10 @@
     // Password verified — delete all votes
     btn.textContent = 'Eliminando votos...';
 
-    const { error: deleteError } = await db.from('votos').delete().neq('id', 0);
+    const { error: deleteError, count } = await db
+  .from('votos')
+  .delete({ count: 'exact' })
+  .gte('id', 0);
 
     if (deleteError) {
       showToast('Error al eliminar votos: ' + deleteError.message, '❌');
