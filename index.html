@@ -20,17 +20,13 @@
       --success: #4caf7a;
       --error: #c94c4c;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
     }
-
-    /* ── HEADER ── */
     header {
       background: linear-gradient(180deg, #000 0%, var(--bg2) 100%);
       border-bottom: 1px solid var(--gold-dim);
@@ -91,8 +87,6 @@
       0%,100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(1.3); }
     }
-
-    /* ── NAV ── */
     nav {
       display: flex;
       justify-content: center;
@@ -120,12 +114,8 @@
       border-bottom-color: var(--gold);
     }
     nav button:hover:not(.active) { color: var(--text); }
-
-    /* ── SECTIONS ── */
     section { display: none; padding: 2rem 1rem 4rem; max-width: 700px; margin: 0 auto; }
     section.active { display: block; }
-
-    /* ── OBRAS GRID ── */
     .obras-label {
       font-size: 0.7rem;
       letter-spacing: 0.2em;
@@ -145,13 +135,24 @@
       border-radius: 4px;
       padding: 0.8rem 1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(.4,0,.2,1);
       position: relative;
+      overflow: hidden;
     }
-    .obra-card:hover { border-color: var(--gold-dim); background: #1f1a10; }
+    .obra-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .obra-card:hover::before { opacity: 1; }
+    .obra-card:hover { border-color: var(--gold-dim); background: #1f1a10; transform: translateY(-2px); }
     .obra-card.selected {
       border-color: var(--gold);
       background: #1f1a10;
+      box-shadow: 0 0 20px rgba(201,168,76,0.15);
     }
     .obra-card.selected::after {
       content: '✦';
@@ -159,6 +160,11 @@
       top: 0.5rem; right: 0.6rem;
       color: var(--gold);
       font-size: 0.75rem;
+      animation: fadeInStar 0.3s ease;
+    }
+    @keyframes fadeInStar {
+      from { opacity: 0; transform: scale(0) rotate(-180deg); }
+      to { opacity: 1; transform: scale(1) rotate(0deg); }
     }
     .obra-num {
       font-size: 0.65rem;
@@ -172,8 +178,6 @@
       line-height: 1.3;
       color: var(--text);
     }
-
-    /* ── FORM ── */
     .form-group { margin-bottom: 1.2rem; }
     label {
       display: block;
@@ -193,12 +197,14 @@
       font-size: 0.95rem;
       padding: 0.75rem 1rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
-    input:focus, textarea:focus { border-color: var(--gold-dim); }
+    input:focus, textarea:focus {
+      border-color: var(--gold-dim);
+      box-shadow: 0 0 12px rgba(201,168,76,0.1);
+    }
     textarea { resize: vertical; min-height: 80px; }
     input::placeholder, textarea::placeholder { color: var(--text-dim); }
-
     .btn-votar {
       width: 100%;
       background: var(--gold);
@@ -212,14 +218,25 @@
       text-transform: uppercase;
       padding: 1rem;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.3s;
       margin-top: 0.5rem;
+      position: relative;
+      overflow: hidden;
     }
-    .btn-votar:hover { background: var(--gold-light); }
+    .btn-votar::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.5s, height 0.5s;
+    }
+    .btn-votar:active::after { width: 300px; height: 300px; }
+    .btn-votar:hover { background: var(--gold-light); box-shadow: 0 4px 20px rgba(201,168,76,0.3); }
     .btn-votar:active { transform: scale(0.99); }
-    .btn-votar:disabled { background: var(--gold-dim); cursor: not-allowed; }
-
-    /* ── MENSAJES ── */
+    .btn-votar:disabled { background: var(--gold-dim); cursor: not-allowed; box-shadow: none; }
     .mensaje {
       display: none;
       border-radius: 4px;
@@ -227,19 +244,26 @@
       margin-bottom: 1.2rem;
       font-size: 0.88rem;
       line-height: 1.5;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .mensaje.show { display: block; }
     .mensaje.error { background: #1f0a0a; border: 1px solid var(--error); color: #e88; }
     .mensaje.warning { background: #1a140a; border: 1px solid var(--gold-dim); color: var(--gold-light); }
     .mensaje.success-msg { background: #0a1f12; border: 1px solid var(--success); color: #7de0a8; }
-
-    /* ── PANTALLAS ESPECIALES ── */
     .pantalla-especial {
       display: none;
       text-align: center;
       padding: 3rem 1rem;
     }
-    .pantalla-especial.show { display: block; }
+    .pantalla-especial.show { display: block; animation: fadeUp 0.5s ease; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .pantalla-especial .icono { font-size: 3rem; margin-bottom: 1rem; }
     .pantalla-especial h2 {
       font-family: 'Playfair Display', serif;
@@ -254,8 +278,6 @@
       margin: 0 auto;
       line-height: 1.6;
     }
-
-    /* ── ADMIN ── */
     .admin-login { max-width: 380px; margin: 2rem auto; }
     .admin-login h2 {
       font-family: 'Playfair Display', serif;
@@ -264,7 +286,6 @@
       margin-bottom: 1.5rem;
       text-align: center;
     }
-
     .stat-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -277,7 +298,9 @@
       border-radius: 4px;
       padding: 1rem;
       text-align: center;
+      transition: transform 0.3s, border-color 0.3s;
     }
+    .stat-card:hover { transform: translateY(-2px); border-color: var(--gold-dim); }
     .stat-num {
       font-family: 'Playfair Display', serif;
       font-size: 2rem;
@@ -290,7 +313,6 @@
       color: var(--text-dim);
       margin-top: 0.2rem;
     }
-
     .resultados-label {
       font-size: 0.7rem;
       letter-spacing: 0.2em;
@@ -308,7 +330,9 @@
       display: flex;
       align-items: center;
       gap: 0.8rem;
+      transition: transform 0.2s, border-color 0.3s;
     }
+    .resultado-item:hover { transform: translateX(4px); }
     .resultado-item.top1 { border-color: #ffd700; }
     .resultado-item.top2 { border-color: #c0c0c0; }
     .resultado-item.top3 { border-color: #cd7f32; }
@@ -328,9 +352,9 @@
     }
     .resultado-barra {
       height: 100%;
-      background: var(--gold);
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-light));
       border-radius: 2px;
-      transition: width 0.8s ease;
+      transition: width 0.8s cubic-bezier(.4,0,.2,1);
     }
     .resultado-votos {
       font-size: 0.8rem;
@@ -339,7 +363,6 @@
       min-width: 40px;
       text-align: right;
     }
-
     .btn-cerrar {
       width: 100%;
       padding: 0.9rem;
@@ -355,8 +378,9 @@
       margin-top: 1.5rem;
     }
     .btn-cerrar.cerrar { background: var(--error); color: #fff; }
+    .btn-cerrar.cerrar:hover { background: #d55; }
     .btn-cerrar.abrir { background: var(--success); color: #000; }
-
+    .btn-cerrar.abrir:hover { background: #5dc98a; }
     .btn-logout {
       width: 100%;
       padding: 0.7rem;
@@ -373,14 +397,297 @@
       transition: all 0.2s;
     }
     .btn-logout:hover { border-color: var(--text-dim); color: var(--text); }
-
     .divider {
       border: none;
       border-top: 1px solid var(--border);
       margin: 1.5rem 0;
     }
-
-    /* ── FOOTER ── */
+    /* ── COUNTDOWN ── */
+    .countdown-wrap {
+      display: none;
+      text-align: center;
+      margin-top: 0.8rem;
+    }
+    .countdown-wrap.show { display: block; }
+    .countdown-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+    .countdown-timer {
+      display: inline-flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 48px;
+    }
+    .countdown-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      line-height: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      min-width: 48px;
+      text-align: center;
+    }
+    .countdown-unit-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+    .countdown-sep {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--gold-dim);
+      margin-bottom: 1rem;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    /* ── CHART ── */
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem auto;
+      position: relative;
+      width: 260px;
+      height: 260px;
+    }
+    .chart-canvas {
+      width: 260px;
+      height: 260px;
+    }
+    .chart-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      text-align: center;
+      pointer-events: none;
+    }
+    .chart-center-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .chart-center-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+    .chart-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem 1rem;
+      margin: 1rem auto 0;
+      max-width: 500px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .legend-name { flex: 1; color: var(--text); }
+    .legend-pct { color: var(--gold); font-weight: 500; }
+    /* ── REALTIME INDICATOR ── */
+    .realtime-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 1rem;
+    }
+    .realtime-badge .rt-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.5s infinite;
+    }
+    /* ── TOAST NOTIFICATION ── */
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      background: var(--bg3);
+      border: 1px solid var(--gold-dim);
+      border-radius: 6px;
+      padding: 0.8rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      animation: toastIn 0.4s ease, toastOut 0.4s ease 2.6s forwards;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 320px;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(40px); }
+    }
+    /* ── ADMIN ACTIONS ROW ── */
+    .admin-actions {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+    .admin-actions button {
+      flex: 1;
+    }
+    .btn-reset {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 3px;
+      border: 1px solid var(--error);
+      background: transparent;
+      color: var(--error);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reset:hover { background: var(--error); color: #fff; }
+    .btn-export {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 3px;
+      border: 1px solid var(--gold-dim);
+      background: transparent;
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-export:hover { background: var(--gold); color: #000; }
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: var(--bg2);
+      border: 1px solid var(--gold-dim);
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      animation: modalPop 0.3s ease;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--error);
+      margin-bottom: 0.8rem;
+    }
+    .modal-box p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 0.6rem;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 0.8rem;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .modal-cancel:hover { border-color: var(--text-dim); color: var(--text); }
+    .modal-confirm {
+      background: var(--error);
+      border: none;
+      color: #fff;
+    }
+    .modal-confirm:hover { background: #d55; }
+    .modal-confirm:disabled { background: var(--gold-dim); cursor: not-allowed; }
+    /* ── PARTICLES BG ── */
+    .particles-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* ── CONFETTI ── */
+    .confetti-piece {
+      position: fixed;
+      z-index: 9998;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
+    }
     footer {
       text-align: center;
       padding: 2rem 1rem;
@@ -394,8 +701,6 @@
       line-height: 1.8;
     }
     footer p span { color: var(--gold); }
-
-    /* ── LOADING ── */
     .spinner {
       display: inline-block;
       width: 14px; height: 14px;
@@ -407,15 +712,81 @@
       margin-right: 0.4rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
+    /* ── COUNTDOWN ADMIN ── */
+    .countdown-admin-section {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
+    }
+    .countdown-admin-section label { margin-bottom: 0.6rem; }
+    .countdown-admin-section input[type="datetime-local"] {
+      background: var(--bg);
+      max-width: 280px;
+    }
+    .btn-set-countdown {
+      display: inline-block;
+      margin-top: 0.6rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 3px;
+      border: 1px solid var(--gold-dim);
+      background: transparent;
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-set-countdown:hover { background: var(--gold); color: #000; }
+    .btn-clear-countdown {
+      display: inline-block;
+      margin-top: 0.6rem;
+      margin-left: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-clear-countdown:hover { border-color: var(--text-dim); color: var(--text); }
     @media (max-width: 480px) {
       .obras-grid { grid-template-columns: 1fr; }
       .stat-cards { grid-template-columns: 1fr 1fr; }
+      .admin-actions { flex-direction: column; }
+      .chart-legend { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-
+<canvas class="particles-canvas" id="particlesCanvas"></canvas>
+<div class="toast-container" id="toastContainer"></div>
+<!-- ── RESET MODAL ── -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <h3>⚠ Reiniciar Votaciones</h3>
+    <p>Esta acción eliminará <strong>todos los votos</strong> registrados. Esta operación no se puede deshacer.</p>
+    <div class="form-group" style="text-align:left;margin-bottom:1rem;">
+      <label>Confirma ingresando tu contraseña</label>
+      <input type="password" id="resetPassword" placeholder="••••••••"/>
+    </div>
+    <div class="mensaje error" id="msgResetError" style="text-align:left;">Contraseña incorrecta.</div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="cerrarModalReset()">Cancelar</button>
+      <button class="modal-confirm" id="btnConfirmReset" onclick="confirmarReset()">Reiniciar todo</button>
+    </div>
+  </div>
+</div>
 <header>
   <div class="header-badge">SENA CTPGA - 2026</div>
   <h1>Galería <span>Expresando Arte</span></h1>
@@ -424,38 +795,51 @@
     <span class="dot"></span>
     <span id="statusText">Votaciones abiertas</span>
   </div>
+  <div class="countdown-wrap" id="countdownWrap">
+    <div class="countdown-label">Las votaciones cierran en</div>
+    <div class="countdown-timer" id="countdownTimer">
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cdDays">00</div>
+        <div class="countdown-unit-label">Días</div>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cdHours">00</div>
+        <div class="countdown-unit-label">Horas</div>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cdMins">00</div>
+        <div class="countdown-unit-label">Min</div>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <div class="countdown-num" id="cdSecs">00</div>
+        <div class="countdown-unit-label">Seg</div>
+      </div>
+    </div>
+  </div>
 </header>
-
 <nav>
   <button class="active" onclick="showTab('votar', this)">✦ Votar</button>
   <button onclick="showTab('admin', this)">Administrador</button>
 </nav>
-
 <!-- ══════════════ SECCIÓN VOTAR ══════════════ -->
 <section id="tab-votar" class="active">
-
-  <!-- Pantalla: votaciones cerradas -->
   <div class="pantalla-especial" id="pantallaCerrada">
     <div class="icono">🔒</div>
     <h2>Votaciones cerradas</h2>
     <p>Las votaciones han finalizado. Te invitamos a estar pendiente de los resultados del concurso. ¡Gracias por participar!</p>
   </div>
-
-  <!-- Pantalla: ya votó -->
   <div class="pantalla-especial" id="pantallaYaVoto">
     <div class="icono">✅</div>
     <h2>¡Gracias por votar!</h2>
     <p>Tu voto ha sido registrado exitosamente. Gracias por participar de este Evento.</p>
   </div>
-
-  <!-- Formulario de votación -->
   <div id="formularioVotar">
-
     <p class="obras-label">Selecciona la obra que mas te guste</p>
     <div class="obras-grid" id="obrasGrid"></div>
-
     <hr class="divider"/>
-
     <div class="form-group">
       <label>Número de documento</label>
       <input type="text" id="cedula" placeholder="Ej: 1038106287" inputmode="numeric"/>
@@ -468,21 +852,15 @@
       <label>¿Por qué votas por esta obra? <span style="color:var(--text-dim);font-size:0.75rem;text-transform:none;letter-spacing:0">(opcional)</span></label>
       <textarea id="descripcion" placeholder="Comparte tu opinión sobre la obra..."></textarea>
     </div>
-
-    <!-- Mensajes -->
     <div class="mensaje error" id="msgCampos">Por favor completa todos los campos requeridos y selecciona una obra.</div>
     <div class="mensaje error" id="msgNoHabilitado">⚠️ Lastimosamente tu número de documento no está en la lista de aprendices habilitados para votar.</div>
     <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, tú voto ya esta en la base de datos.</div>
     <div class="mensaje success-msg" id="msgExito">✦ ¡Tu voto ha sido registrado exitosamente!</div>
-
     <button class="btn-votar" id="btnVotar" onclick="emitirVoto()">✦ Emitir mi voto</button>
   </div>
 </section>
-
 <!-- ══════════════ SECCIÓN ADMIN ══════════════ -->
 <section id="tab-admin">
-
-  <!-- Login admin -->
   <div class="admin-login" id="adminLogin">
     <h2>Acceso Administrador</h2>
     <div class="form-group">
@@ -492,10 +870,11 @@
     <div class="mensaje error" id="msgPassError">Contraseña incorrecta.</div>
     <button class="btn-votar" onclick="loginAdmin()">Ingresar</button>
   </div>
-
-  <!-- Panel admin -->
   <div id="adminPanel" style="display:none">
-
+    <div class="realtime-badge">
+      <span class="rt-dot"></span>
+      <span>Datos en tiempo real</span>
+    </div>
     <div class="stat-cards">
       <div class="stat-card">
         <div class="stat-num" id="totalVotos">—</div>
@@ -510,28 +889,47 @@
         <div class="stat-label">Obra líder</div>
       </div>
     </div>
-
-    <p class="resultados-label">Resultados en tiempo real</p>
+    <!-- CHART -->
+    <p class="resultados-label">Distribución de votos</p>
+    <div class="chart-container">
+      <canvas class="chart-canvas" id="chartCanvas" width="260" height="260"></canvas>
+      <div class="chart-center">
+        <div class="chart-center-num" id="chartCenterNum">0</div>
+        <div class="chart-center-label">Votos</div>
+      </div>
+    </div>
+    <div class="chart-legend" id="chartLegend"></div>
+    <p class="resultados-label" style="margin-top:2rem;">Ranking de obras</p>
     <div id="resultadosAdmin"></div>
-
-    <button class="btn-cerrar cerrar" id="btnEstado" onclick="toggleVotacion()">🔒 Cerrar votaciones</button>
+    <!-- COUNTDOWN ADMIN SECTION -->
+    <div class="countdown-admin-section">
+      <label>⏱ Contador regresivo de cierre</label>
+      <p style="font-size:0.75rem;color:var(--text-dim);margin-bottom:0.8rem;">Define la fecha y hora en que las votaciones se cerrarán automáticamente.</p>
+      <input type="datetime-local" id="countdownInput"/>
+      <br/>
+      <button class="btn-set-countdown" onclick="setCountdown()">Aplicar</button>
+      <button class="btn-clear-countdown" onclick="clearCountdown()">Quitar</button>
+    </div>
+    <!-- ADMIN ACTIONS -->
+    <div class="admin-actions">
+      <button class="btn-cerrar cerrar" id="btnEstado" onclick="toggleVotacion()">🔒 Cerrar votaciones</button>
+      <button class="btn-export" onclick="exportarExcel()">📊 Exportar Excel</button>
+    </div>
+    <button class="btn-reset" style="margin-top:0.6rem;" onclick="abrirModalReset()">🗑 Reiniciar votaciones</button>
     <button class="btn-logout" onclick="logoutAdmin()">Cerrar sesión</button>
   </div>
 </section>
-
 <footer>
   <p><span>Evento organizado por Bienestar al Aprendiz</span></p>
   <p>SENA · Galería Expresando Arte · Concurso de Arte 2026</p>
-  <p><span> © 2026 Carlos Andres Jimenez Murillo. Todos los derechos reservados.</span></p>
+  <p><span>© 2026 Carlos Andres Jimenez Murillo. Todos los derechos reservados.</span></p>
 </footer>
-
 <script>
   // ── SUPABASE ──
   const SUPABASE_URL = 'https://kugbnlgzyoxuzsqoccnc.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1Z2JubGd6eW94dXpzcW9jY25jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzMjY3MDQsImV4cCI6MjA5NDkwMjcwNH0.H3YU6HhauOpX-jQ7HBxLcfC14YrTI5J3AV-Mq5vxtDc';
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
-
   // ── OBRAS ──
   const OBRAS = [
     'Carta de afrocolombianidad',
@@ -546,26 +944,127 @@
     'Orgullo Afrocolombiano',
     'Todos somos un color'
   ];
-
+  // Chart color palette — rich, harmonious
+  const CHART_COLORS = [
+    '#c9a84c', '#e8c97a', '#7a5f2a', '#d4a257', '#b8860b',
+    '#daa520', '#f0c674', '#c4943a', '#a67c28', '#8b6914',
+    '#e6be73'
+  ];
   let obraSeleccionada = null;
   let votacionAbierta = true;
-
-  // ── INIT ──
-  async function init() {
-    renderObras();
-    await checkEstadoVotacion();
-
-    const { data } = await db.auth.getSession();
-
-    if (data.session) {
-
-      document.getElementById('adminLogin').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-
-      cargarResultados();
+  let countdownTarget = null;
+  let countdownInterval = null;
+  let realtimeChannel = null;
+  // ── PARTICLES BACKGROUND ──
+  function initParticles() {
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const PARTICLE_COUNT = 40;
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.3 + 0.05
+      });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201, 168, 76, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+  // ── TOAST NOTIFICATIONS ──
+  function showToast(message, icon = '✦') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span style="font-size:1rem;">${icon}</span> ${message}`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 3000);
+  }
+  // ── CONFETTI ──
+  function launchConfetti() {
+    const colors = ['#c9a84c', '#e8c97a', '#ffd700', '#f0c674', '#daa520', '#fff'];
+    for (let i = 0; i < 50; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const size = Math.random() * 8 + 4;
+      piece.style.width = size + 'px';
+      piece.style.height = size + 'px';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.top = -10 + 'px';
+      piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+      piece.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 4000);
     }
   }
-
+  // ── INIT ──
+  async function init() {
+    initParticles();
+    renderObras();
+    await checkEstadoVotacion();
+    await loadCountdownTarget();
+    const { data } = await db.auth.getSession();
+    if (data.session) {
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      cargarResultados();
+    }
+    // Subscribe to Supabase Realtime
+    setupRealtime();
+  }
+  // ── REALTIME ──
+  function setupRealtime() {
+    realtimeChannel = db
+      .channel('votos-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'votos' }, (payload) => {
+        // When a new vote is inserted, deleted, or updated
+        if (payload.eventType === 'INSERT') {
+          showToast(`Nuevo voto registrado para: ${payload.new.obra}`, '🗳');
+        }
+        // Refresh admin panel if visible
+        const adminPanel = document.getElementById('adminPanel');
+        if (adminPanel && adminPanel.style.display !== 'none') {
+          cargarResultados();
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'configuracion' }, (payload) => {
+        // When voting state changes
+        checkEstadoVotacion();
+        if (payload.new?.valor === 'false') {
+          showToast('Las votaciones han sido cerradas', '🔒');
+        } else if (payload.new?.valor === 'true') {
+          showToast('Las votaciones están abiertas', '🔓');
+        }
+      })
+      .subscribe();
+  }
+  // ── RENDER OBRAS ──
   function renderObras() {
     const grid = document.getElementById('obrasGrid');
     grid.innerHTML = OBRAS.map((nombre, i) => `
@@ -575,26 +1074,23 @@
       </div>
     `).join('');
   }
-
   function seleccionarObra(idx, nombre) {
     document.querySelectorAll('.obra-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('obra-'+idx).classList.add('selected');
     obraSeleccionada = nombre;
   }
-
+  // ── ESTADO VOTACION ──
   async function checkEstadoVotacion() {
     const { data } = await db.from('configuracion').select('valor').eq('clave','votacion_abierta').maybeSingle();
     votacionAbierta = data?.valor === 'true';
     actualizarUIEstado();
   }
-
   function actualizarUIEstado() {
     const badge = document.getElementById('statusBadge');
     const texto = document.getElementById('statusText');
     const cerrada = document.getElementById('pantallaCerrada');
     const formulario = document.getElementById('formularioVotar');
     const yaVoto = document.getElementById('pantallaYaVoto');
-
     if (!votacionAbierta) {
       cerrada.classList.add('show');
       formulario.style.display = 'none';
@@ -612,73 +1108,129 @@
       texto.textContent = 'Votaciones abiertas';
     }
   }
-
+  // ── COUNTDOWN ──
+  async function loadCountdownTarget() {
+    const { data } = await db.from('configuracion').select('valor').eq('clave','countdown_target').maybeSingle();
+    if (data?.valor) {
+      countdownTarget = new Date(data.valor);
+      startCountdown();
+    }
+  }
+  function startCountdown() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    const wrap = document.getElementById('countdownWrap');
+    if (!countdownTarget || isNaN(countdownTarget.getTime())) {
+      wrap.classList.remove('show');
+      return;
+    }
+    wrap.classList.add('show');
+    updateCountdownDisplay();
+    countdownInterval = setInterval(updateCountdownDisplay, 1000);
+  }
+  function updateCountdownDisplay() {
+    const now = new Date();
+    const diff = countdownTarget - now;
+    if (diff <= 0) {
+      document.getElementById('cdDays').textContent = '00';
+      document.getElementById('cdHours').textContent = '00';
+      document.getElementById('cdMins').textContent = '00';
+      document.getElementById('cdSecs').textContent = '00';
+      if (countdownInterval) clearInterval(countdownInterval);
+      // Auto-close voting
+      if (votacionAbierta) {
+        toggleVotacionAutoClose();
+      }
+      return;
+    }
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((diff % (1000*60)) / 1000);
+    document.getElementById('cdDays').textContent = String(days).padStart(2,'0');
+    document.getElementById('cdHours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('cdMins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('cdSecs').textContent = String(secs).padStart(2,'0');
+  }
+  async function toggleVotacionAutoClose() {
+    await db.from('configuracion').update({ valor: 'false' }).eq('clave','votacion_abierta');
+    votacionAbierta = false;
+    actualizarUIEstado();
+    showToast('¡Las votaciones se han cerrado automáticamente!', '⏱');
+  }
+  async function setCountdown() {
+    const input = document.getElementById('countdownInput');
+    if (!input.value) return;
+    countdownTarget = new Date(input.value);
+    // Save to Supabase
+    const { data: existing } = await db.from('configuracion').select('clave').eq('clave','countdown_target').maybeSingle();
+    if (existing) {
+      await db.from('configuracion').update({ valor: countdownTarget.toISOString() }).eq('clave','countdown_target');
+    } else {
+      await db.from('configuracion').insert({ clave: 'countdown_target', valor: countdownTarget.toISOString() });
+    }
+    startCountdown();
+    showToast('Contador regresivo configurado', '⏱');
+  }
+  async function clearCountdown() {
+    countdownTarget = null;
+    if (countdownInterval) clearInterval(countdownInterval);
+    document.getElementById('countdownWrap').classList.remove('show');
+    document.getElementById('countdownInput').value = '';
+    await db.from('configuracion').update({ valor: '' }).eq('clave','countdown_target');
+    showToast('Contador regresivo eliminado', '🗑');
+  }
   // ── VOTAR ──
   async function emitirVoto() {
     if (!votacionAbierta) return;
     ocultarMensajes();
-
     const cedula = document.getElementById('cedula').value.trim();
     const ficha  = document.getElementById('ficha').value.trim();
     const desc   = document.getElementById('descripcion').value.trim();
-
     if (!/^\d+$/.test(cedula) || !/^\d+$/.test(ficha)) {
-
-      document.getElementById('msgCampos').textContent =
-        'La cédula y la ficha solo deben contener números';
-
+      document.getElementById('msgCampos').textContent = 'La cédula y la ficha solo deben contener números';
       document.getElementById('msgCampos').classList.add('show');
-
       return;
     }
-
     if (!obraSeleccionada || !cedula || !ficha) {
+      document.getElementById('msgCampos').textContent = 'Por favor completa todos los campos requeridos y selecciona una obra.';
       document.getElementById('msgCampos').classList.add('show');
       return;
     }
-
     const btn = document.getElementById('btnVotar');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Registrando...';
-
-    // 1. Verificar que la cédula esté habilitada
-    const { data: aprendiz, error: errApr } = await db
+    // 1. Verify document is enabled
+    const { data: aprendiz } = await db
       .from('aprendices')
       .select('numero_documento')
       .eq('numero_documento', cedula)
       .maybeSingle();
-
     if (!aprendiz) {
       document.getElementById('msgNoHabilitado').classList.add('show');
       btn.disabled = false;
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
-
-    // 2. Verificar si ya votó
+    // 2. Check if already voted
     const { data: votoExistente } = await db
       .from('votos')
       .select('id')
       .eq('numero_documento', cedula)
       .maybeSingle();
-
     if (votoExistente) {
       document.getElementById('msgYaVoto').classList.add('show');
       btn.disabled = false;
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
-
-    // 3. Registrar voto
+    // 3. Register vote
     const { error: errVoto } = await db.from('votos').insert({
       numero_documento: cedula,
       obra: obraSeleccionada,
       ficha: ficha,
       descripcion: desc || null
     });
-
     if (errVoto) {
-      // Por si acaso hubo doble envío simultáneo
       if (errVoto.code === '23505') {
         document.getElementById('msgYaVoto').classList.add('show');
       } else {
@@ -689,89 +1241,61 @@
       btn.innerHTML = '✦ Emitir mi voto';
       return;
     }
-
-    // Éxito
+    // Success!
+    launchConfetti();
     document.getElementById('formularioVotar').style.display = 'none';
     document.getElementById('pantallaYaVoto').classList.add('show');
-
     obraSeleccionada = null;
-
     document.getElementById('cedula').value = '';
     document.getElementById('ficha').value = '';
     document.getElementById('descripcion').value = '';
-
-    document.querySelectorAll('.obra-card')
-    .forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.obra-card').forEach(c => c.classList.remove('selected'));
   }
-
   function ocultarMensajes() {
     document.querySelectorAll('.mensaje').forEach(m => m.classList.remove('show'));
   }
-
-  // ── ADMIN ──
+  // ── ADMIN LOGIN ──
   async function loginAdmin() {
-
     ocultarMensajes();
-
     const password = document.getElementById('adminPass').value.trim();
-
     if (!password) {
       document.getElementById('msgPassError').classList.add('show');
       return;
     }
-
     const { error } = await db.auth.signInWithPassword({
       email: 'andres@sena.com',
       password: password
     });
-
     if (error) {
       document.getElementById('msgPassError').classList.add('show');
       return;
     }
-
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
-
     cargarResultados();
   }
-
   async function logoutAdmin() {
-
     await db.auth.signOut();
-
     document.getElementById('adminLogin').style.display = 'block';
     document.getElementById('adminPanel').style.display = 'none';
-
     document.getElementById('adminPass').value = '';
   }
-
+  // ── LOAD RESULTS ──
   async function cargarResultados() {
-    const {
-  data: { session }
-} = await db.auth.getSession();
-
-if (!session) return;
-
-const { data: votos } = await db
-  .from('votos')
-  .select('obra');
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) return;
+    const { data: votos } = await db.from('votos').select('obra');
     await checkEstadoVotacion();
-
     const conteo = {};
     OBRAS.forEach(o => conteo[o] = 0);
     (votos || []).forEach(v => { if (conteo[v.obra] !== undefined) conteo[v.obra]++; });
-
     const total = votos?.length || 0;
     document.getElementById('totalVotos').textContent = total;
-
     const sorted = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
     document.getElementById('obraLider').textContent = sorted[0][1] > 0 ? (OBRAS.indexOf(sorted[0][0])+1) : '—';
-
     const medals = ['🥇','🥈','🥉'];
     const topClasses = ['top1','top2','top3'];
     const maxVotos = sorted[0][1] || 1;
-
     document.getElementById('resultadosAdmin').innerHTML = sorted.map(([obra, votos], i) => `
       <div class="resultado-item ${topClasses[i]||''}">
         <div class="medal">${medals[i]||''}</div>
@@ -784,8 +1308,9 @@ const { data: votos } = await db
         <div class="resultado-votos">${votos}</div>
       </div>
     `).join('');
-
-    // Botón estado
+    // Update chart
+    drawDonutChart(conteo, total);
+    // Status button
     const btn = document.getElementById('btnEstado');
     if (votacionAbierta) {
       btn.textContent = '🔒 Cerrar votaciones';
@@ -795,7 +1320,68 @@ const { data: votos } = await db
       btn.className = 'btn-cerrar abrir';
     }
   }
-
+  // ── DONUT CHART ──
+  function drawDonutChart(conteo, total) {
+    const canvas = document.getElementById('chartCanvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const displaySize = 260;
+    canvas.width = displaySize * dpr;
+    canvas.height = displaySize * dpr;
+    canvas.style.width = displaySize + 'px';
+    canvas.style.height = displaySize + 'px';
+    ctx.scale(dpr, dpr);
+    const cx = displaySize / 2;
+    const cy = displaySize / 2;
+    const radius = 110;
+    const innerRadius = 68;
+    ctx.clearRect(0, 0, displaySize, displaySize);
+    document.getElementById('chartCenterNum').textContent = total;
+    const entries = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+    if (total === 0) {
+      // Empty state — draw a gray ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.arc(cx, cy, innerRadius, 0, Math.PI * 2, true);
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fill();
+      document.getElementById('chartLegend').innerHTML = '';
+      return;
+    }
+    let startAngle = -Math.PI / 2;
+    const gap = 0.02; // gap between slices
+    entries.forEach(([obra, votos], i) => {
+      if (votos === 0) return;
+      const sliceAngle = (votos / total) * Math.PI * 2 - gap;
+      if (sliceAngle <= 0) return;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, startAngle + gap/2, startAngle + sliceAngle + gap/2);
+      ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle + gap/2, startAngle + gap/2, true);
+      ctx.closePath();
+      ctx.fillStyle = CHART_COLORS[i % CHART_COLORS.length];
+      ctx.fill();
+      // Subtle shadow
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.shadowBlur = 4;
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      startAngle += (votos / total) * Math.PI * 2;
+    });
+    // Legend
+    const legendEl = document.getElementById('chartLegend');
+    legendEl.innerHTML = entries.map(([obra, votos], i) => {
+      const pct = total > 0 ? ((votos/total)*100).toFixed(1) : '0.0';
+      return `
+        <div class="legend-item">
+          <span class="legend-dot" style="background:${CHART_COLORS[i % CHART_COLORS.length]}"></span>
+          <span class="legend-name">${obra}</span>
+          <span class="legend-pct">${pct}%</span>
+        </div>
+      `;
+    }).join('');
+  }
+  // ── TOGGLE VOTACION ──
   async function toggleVotacion() {
     const nuevoEstado = votacionAbierta ? 'false' : 'true';
     await db.from('configuracion').update({ valor: nuevoEstado }).eq('clave','votacion_abierta');
@@ -803,7 +1389,89 @@ const { data: votos } = await db
     actualizarUIEstado();
     await cargarResultados();
   }
-
+  // ── EXPORT TO EXCEL ──
+  async function exportarExcel() {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) return;
+    const { data: votos } = await db
+      .from('votos')
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (!votos || votos.length === 0) {
+      showToast('No hay votos para exportar', '⚠️');
+      return;
+    }
+    // Build CSV content (Excel-compatible with BOM)
+    const BOM = '\uFEFF';
+    const headers = ['ID', 'Número de Documento', 'Obra', 'Ficha', 'Descripción', 'Fecha'];
+    const rows = votos.map(v => [
+      v.id,
+      v.numero_documento,
+      `"${(v.obra || '').replace(/"/g, '""')}"`,
+      v.ficha,
+      `"${(v.descripcion || '').replace(/"/g, '""')}"`,
+      new Date(v.created_at).toLocaleString('es-CO')
+    ]);
+    const csv = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `votos_galeria_arte_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('Archivo exportado exitosamente', '📊');
+  }
+  // ── RESET VOTACIONES ──
+  function abrirModalReset() {
+    document.getElementById('resetModal').classList.add('show');
+    document.getElementById('resetPassword').value = '';
+    document.getElementById('msgResetError').classList.remove('show');
+  }
+  function cerrarModalReset() {
+    document.getElementById('resetModal').classList.remove('show');
+    document.getElementById('resetPassword').value = '';
+    document.getElementById('msgResetError').classList.remove('show');
+  }
+  async function confirmarReset() {
+    const password = document.getElementById('resetPassword').value.trim();
+    if (!password) {
+      document.getElementById('msgResetError').classList.add('show');
+      return;
+    }
+    const btn = document.getElementById('btnConfirmReset');
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+    // Re-authenticate to verify password
+    // Sign out and sign back in to validate the password
+    const { error } = await db.auth.signInWithPassword({
+      email: 'andres@sena.com',
+      password: password
+    });
+    if (error) {
+      document.getElementById('msgResetError').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Reiniciar todo';
+      return;
+    }
+    // Password verified — delete all votes
+    btn.textContent = 'Eliminando votos...';
+    const { error: deleteError } = await db.from('votos').delete().neq('id', 0);
+    if (deleteError) {
+      showToast('Error al eliminar votos: ' + deleteError.message, '❌');
+      btn.disabled = false;
+      btn.textContent = 'Reiniciar todo';
+      cerrarModalReset();
+      return;
+    }
+    showToast('Todas las votaciones han sido reiniciadas', '🗑');
+    cerrarModalReset();
+    btn.disabled = false;
+    btn.textContent = 'Reiniciar todo';
+    await cargarResultados();
+  }
   // ── TABS ──
   function showTab(tab, btn) {
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -812,7 +1480,6 @@ const { data: votos } = await db
     btn.classList.add('active');
     if (tab === 'admin') cargarResultados();
   }
-
   init();
 </script>
 </body>
