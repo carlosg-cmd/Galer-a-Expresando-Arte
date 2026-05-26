@@ -443,13 +443,13 @@
   <div class="pantalla-especial" id="pantallaYaVoto">
     <div class="icono">✅</div>
     <h2>¡Gracias por votar!</h2>
-    <p>Tu voto ha sido registrado exitosamente. Recuerda que solo se permite un voto por aprendiz.</p>
+    <p>Tu voto ha sido registrado exitosamente. Gracias por participar de este Evento.</p>
   </div>
 
   <!-- Formulario de votación -->
   <div id="formularioVotar">
 
-    <p class="obras-label">Selecciona la obra de tu preferencia</p>
+    <p class="obras-label">Selecciona la obra que mas te guste</p>
     <div class="obras-grid" id="obrasGrid"></div>
 
     <hr class="divider"/>
@@ -470,7 +470,7 @@
     <!-- Mensajes -->
     <div class="mensaje error" id="msgCampos">Por favor completa todos los campos requeridos y selecciona una obra.</div>
     <div class="mensaje error" id="msgNoHabilitado">⚠️ Lastimosamente tu número de documento no está en la lista de aprendices habilitados para votar.</div>
-    <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, porque ya lo hiciste. Solo se permite un voto por aprendiz.</div>
+    <div class="mensaje warning" id="msgYaVoto">⚠️ Lastimosamente no puedes volver a votar, tú voto ya esta en la base de datos.</div>
     <div class="mensaje success-msg" id="msgExito">✦ ¡Tu voto ha sido registrado exitosamente!</div>
 
     <button class="btn-votar" id="btnVotar" onclick="emitirVoto()">✦ Emitir mi voto</button>
@@ -532,7 +532,7 @@
   // ── OBRAS ──
   const OBRAS = [
     'Carta de afrocolombianidad',
-    '"La Tierra Habita en Ella"',
+    'La Tierra Habita en Ella',
     'Reunión familiar',
     'El Latido de la Tierra y el Río',
     'Tejido de una Historia',
